@@ -16,6 +16,68 @@ suppressPackageStartupMessages(library(eha))
 ```
 
 ```{r echo = FALSE, warning = FALSE}
+n = 100
+t0 <- rweibull(n, shape = 4.5, scale = 22.5)
+
+#This is the relevant dataframe in the case of no ties and no censoring (t0, d0, y0)
+no_ties <- as.data.frame(table(t0)) %>% 
+  set_names(c("t0","d0")) %>% 
+  mutate("y0" = cumsum(d0 %>%  rev()) %>% rev()) %>% 
+  mutate(t0 = as.numeric(as.character(t0)))
+
+
+#Add 0.05 and round to closest decimal to bin the numbers correct
+#This is the relevant dataframe in the case of ties and no censoring (t0, d0, y0)
+with_ties <- round(t0 + 0.05, digits = 1) %>% 
+  table() %>% 
+  as.data.frame() %>% 
+  set_names(c("t0","d0")) %>% 
+  mutate("y0" = cumsum(d0 %>%  rev()) %>% rev()) %>% 
+  mutate(t0 = as.numeric(as.character(t0)))
+
+
+plot(no_ties$t0, cumsum(no_ties$d0 / no_ties$y0), type = "s")
+lines(with_ties$t0, cumsum(with_ties$d0 / with_ties$y0), type = "s", col = "red")
+
+```
+
+```{r echo = FALSE, warning = FALSE}
+#This part includes censoring
+c <- rexp(n, 1/80)
+uncensored <- data.frame(t0 = t0) %>% 
+  mutate(cens = as.numeric(c<t0)) %>%   
+  mutate(t0_bin = round(t0 + 0.05, digits = 1)) %>% 
+  arrange(t0) %>% 
+  filter(cens == 0) 
+  
+with_censor <- uncensored$t0_bin %>% 
+  table() %>% 
+  as.data.frame() %>% 
+  set_names(c("t0","d0")) %>% 
+  mutate(t0 = as.numeric(as.character(t0)))
+
+#Uses the time intervals for true events to include censoring, this is for computing y0
+events_and_cens <- (t0 %>% cut(breaks = c(0,with_censor$t0)) %>% table() %>% as.data.frame())$Freq
+y0 <- cumsum(events_and_cens %>%  rev()) %>% rev()
+
+
+#This is the relevant dataframe in case of censoring (t0, d0, y0)
+#Should work with or without ties
+with_censor <- with_censor %>% mutate(y0 = y0)
+
+plot(no_ties$t0, cumsum(no_ties$d0 / no_ties$y0), type = "s")
+lines(with_ties$t0, cumsum(with_ties$d0 / with_ties$y0), type = "s", col = "red")
+lines(with_censor$t0, cumsum(with_censor$d0 / with_censor$y0), type = "s", col = "blue")
+
+```
+
+
+
+
+
+
+
+```{r echo = FALSE, warning = FALSE, include = FALSE}
 #https://rdrr.io/cran/mice/src/R/nelsonaalen.R
 nelsonaalen <- function(data, timevar, statusvar) {
     #install.on.demand("survival")
