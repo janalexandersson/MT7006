@@ -84,9 +84,10 @@ lines(seq, cum_weibull_haz(seq, 4.5,22.5), col = "green")
 
 #This part includes censoring
 c <- rexp(n, 1/80)
+
 uncensored <- data.frame(t0 = t0) %>% 
   mutate(cens = as.numeric(c<t0)) %>%   
-  mutate(t0_bin = round(t0 + 0.05, digits = 1)) %>% 
+  # mutate(t0_bin = round(t0 + 0.05, digits = 1)) %>% 
   arrange(t0) %>% 
   filter(cens == 0) 
   
@@ -100,11 +101,21 @@ with_censor <- uncensored$t0_bin %>%
 events_and_cens <- (t0 %>% cut(breaks = c(0,with_censor$t0)) %>% table() %>% as.data.frame())$Freq
 y0 <- cumsum(events_and_cens %>%  rev()) %>% rev()
 
+#number of censored events in bins of true events
+c0 <- ((data.frame(t0 = t0) %>% 
+  mutate(cens = as.numeric(c<t0)) %>%   
+  mutate(t0_bin = round(t0 + 0.05, digits = 1)) %>% 
+  arrange(t0) %>% 
+  filter(cens == 1))$t0 %>% cut(breaks = c(0,with_censor$t0)) %>% table() %>% as.data.frame())$Freq
+
 
 #This is the relevant dataframe in case of censoring (t0, d0, y0)
 #Should work with or without ties
 with_censor <- with_censor %>% 
-  mutate(y0 = y0) %>% 
+  mutate(c0 = c0) %>% 
+  # mutate(temp = d0 + c0) %>% 
+  # mutate(y0 = cumsum(rev((with_censor %>% mutate(c0 = c0) %>% mutate(temp = d0+c0))$temp)) %>% rev()) %>% 
+  mutate(y0 = y0) %>%
   mutate(Ahat = cumsum(d0 / y0)) %>% 
   mutate(var = cumsum(1/(y0^2))) %>% 
   mutate(lower = Ahat*exp(-qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
@@ -133,19 +144,19 @@ lines(with_censor$t0, with_censor$upperKM, type = "s", lty = "dashed", col = "bl
 
 #Fit weibull distr to uncensored data
 fitW <- fitdist(uncensored$t0, "weibull", method = "mle", lower = c(0, 0))
-dwei = dweibull(seq, shape=fitW$estimate["shape"], scale=fitW$estimate["scale"])
-
+#dwei = dweibull(seq, shape=fitW$estimate["shape"], scale=fitW$estimate["scale"])
 
 #hazard NA. very cool
 plot(with_censor$t0, diff(c(0,with_censor$Ahat)), type = "s", col = "blue")
 lines(with_censor$t0, diff(c(0,with_censor$KMAhat)), type = "s", col = "red")
 lines(seq, weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]))
+lines(seq, weibull_haz(seq, 4.5, 22.5), col = "green")
 
 #cumulative hazard
 plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue")
 lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "red")
 lines(seq, cum_weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]))
-
+lines(seq, cum_weibull_haz(seq, 4.5, 22.5), col = "green")
 ```
 
 
