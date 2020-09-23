@@ -11,152 +11,197 @@ suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(fitdistrplus))
 ```
 
-```{r echo = FALSE, warning = FALSE}
+```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
 
-
-n <- 100
+plotThings <- function(n){
   
-t0 <- rweibull(n, shape = 4.5, scale = 22.5)
-
-#This is the relevant dataframe in the case of no ties and no censoring (t0, d0, y0)
-no_ties <- as.data.frame(table(t0)) %>% 
-  set_names(c("t0","d0")) %>% 
-  mutate(y0 = cumsum(d0 %>%  rev()) %>% rev()) %>% 
-  mutate(t0 = as.numeric(as.character(t0))) %>% 
-  mutate(Ahat = cumsum(d0 / y0)) %>% 
-  mutate(var = cumsum(1/(y0^2))) %>% 
-  mutate(lower = Ahat*exp(-qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
-  mutate(upper = Ahat*exp(+qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
-  mutate(KMhat = cumprod((1-d0/y0))) %>% 
-  mutate(varKM = KMhat^2*cumsum(d0/(y0*(y0-d0)))) %>% 
-  mutate(lowerKM = -log(KMhat-qnorm(0.95) * sqrt(varKM))) %>% 
-  mutate(upperKM = -log(KMhat+qnorm(0.95) * sqrt(varKM))) %>% 
-  mutate(KMAhat = -log(KMhat))
-
-#Add 0.05 and round to closest decimal to bin the numbers correct
-#This is the relevant dataframe in the case of ties and no censoring (t0, d0, y0)
-with_ties <- round(t0 + 0.05, digits = 1) %>% 
-  table() %>% 
-  as.data.frame() %>% 
-  set_names(c("t0","d0")) %>% 
-  mutate(y0 = cumsum(d0 %>%  rev()) %>% rev()) %>% 
-  mutate(t0 = as.numeric(as.character(t0))) %>% 
-  mutate(Ahat = cumsum(d0 / y0)) %>% 
-  mutate(KMhat = cumprod((1-d0/y0))) %>% 
-  mutate(varKM = KMhat^2*cumsum(d0/(y0*(y0-d0)))) %>% 
-  mutate(lowerKM = -log(KMhat-qnorm(0.95) * sqrt(varKM))) %>% 
-  mutate(upperKM = -log(KMhat+qnorm(0.95) * sqrt(varKM))) %>% 
-  mutate(KMAhat = -log(KMhat))
+  par(mfrow=c(2,3))
   
-
-################################################################
-weibull_haz <- function(t, a, b){
-  a/b *(t/b)^(a-1)
-}
-
-cum_weibull_haz <- function(t, a, b){
-  (t/b)^a
-}
-
-seq <- seq(0,max(t0), max(t0)/n)
-
-
-#no ties
-plot(no_ties$t0, no_ties$Ahat, type = "s", xlab = "t", ylab = "Cumulative hazard", col = "blue")
-lines(no_ties$t0,  no_ties$KMAhat, type = "s", xlab = "t", col = "red")
-lines(no_ties$t0, no_ties$lower, type = "s", lty = "dashed", col = "blue")
-lines(no_ties$t0, no_ties$upper, type = "s", lty = "dashed", col = "blue")
-lines(no_ties$t0, no_ties$lowerKM, type = "s", lty = "dashed", col = "red")
-lines(no_ties$t0, no_ties$upperKM, type = "s", lty = "dashed", col = "red")
-#lines(with_ties$t0, with_ties$Ahat, type = "s", col = "red")
-lines(seq, cum_weibull_haz(seq, 4.5,22.5), col = "green")
-
-#with ties
-plot(with_ties$t0, with_ties$Ahat, type = "s", xlab = "t", ylab = "Cumulative hazard", col = "blue")
-lines(with_ties$t0,  with_ties$KMAhat, type = "s", xlab = "t", col = "red")
-lines(with_ties$t0, with_ties$lower, type = "s", lty = "dashed", col = "blue")
-lines(with_ties$t0, with_ties$upper, type = "s", lty = "dashed", col = "blue")
-lines(with_ties$t0, with_ties$lowerKM, type = "s", lty = "dashed", col = "red")
-lines(with_ties$t0, with_ties$upperKM, type = "s", lty = "dashed", col = "red")
-#lines(with_ties$t0, with_ties$Ahat, type = "s", col = "red")
-lines(seq, cum_weibull_haz(seq, 4.5,22.5), col = "green")
-
-
-#This part includes censoring
-c <- rexp(n, 1/80)
-
-uncensored <- data.frame(t0 = t0) %>% 
-  mutate(cens = as.numeric(c<t0)) %>%   
-  # mutate(t0_bin = round(t0 + 0.05, digits = 1)) %>% 
-  arrange(t0) %>% 
-  filter(cens == 0) 
+  t0 <- rweibull(n, shape = 4.5, scale = 22.5)
   
-with_censor <- uncensored$t0_bin %>% 
-  table() %>% 
-  as.data.frame() %>% 
-  set_names(c("t0","d0")) %>% 
-  mutate(t0 = as.numeric(as.character(t0)))
+  #This is the relevant dataframe in the case of no ties and no censoring (t0, d0, y0)
+  no_ties <- as.data.frame(table(t0)) %>% 
+    set_names(c("t0","d0")) %>% 
+    mutate(y0 = cumsum(d0 %>%  rev()) %>% rev()) %>% 
+    mutate(t0 = as.numeric(as.character(t0))) %>% 
+    mutate(Ahat = cumsum(d0 / y0)) %>% 
+    mutate(var = cumsum(1/(y0^2))) %>% 
+    mutate(lower = Ahat*exp(-qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
+    mutate(upper = Ahat*exp(+qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
+    mutate(KMhat = cumprod((1-d0/y0))) %>% 
+    mutate(varKM = KMhat^2*cumsum(d0/(y0*(y0-d0)))) %>% 
+    mutate(lowerKM = -log(KMhat-qnorm(0.95) * sqrt(varKM))) %>% 
+    mutate(upperKM = -log(KMhat+qnorm(0.95) * sqrt(varKM))) %>% 
+    mutate(KMAhat = -log(KMhat))
+  
+  #Add 0.05 and round to closest decimal to bin the numbers correct
+  #This is the relevant dataframe in the case of ties and no censoring (t0, d0, y0)
+  with_ties <- round(t0 + 0.05, digits = 1) %>% 
+    table() %>% 
+    as.data.frame() %>% 
+    set_names(c("t0","d0")) %>% 
+    mutate(y0 = cumsum(d0 %>%  rev()) %>% rev()) %>% 
+    mutate(t0 = as.numeric(as.character(t0))) %>% 
+    mutate(Ahat = cumsum(d0 / y0)) %>% 
+    mutate(KMhat = cumprod((1-d0/y0))) %>% 
+    mutate(varKM = KMhat^2*cumsum(d0/(y0*(y0-d0)))) %>% 
+    mutate(lowerKM = -log(KMhat-qnorm(0.95) * sqrt(varKM))) %>% 
+    mutate(upperKM = -log(KMhat+qnorm(0.95) * sqrt(varKM))) %>% 
+    mutate(KMAhat = -log(KMhat))
+    
+  
+  ################################################################
+  weibull_haz <- function(t, a, b){
+    a/b*(t/b)^(a-1)
+  }
+  
+  cum_weibull_haz <- function(t, a, b){
+    (t/b)^a
+  }
+  
+  seq <- seq(0,max(t0), max(t0)/n)
+  
+  
+  #no ties
+  plot(no_ties$t0, no_ties$Ahat, type = "s", xlab = "Time", ylab = "Cumulative hazard", col = "blue", 
+       main = "Without ties")
+  lines(no_ties$t0,  no_ties$KMAhat, type = "s", col = "red")
+  lines(no_ties$t0, no_ties$lower, type = "s", lty = "dashed", col = "blue")
+  lines(no_ties$t0, no_ties$upper, type = "s", lty = "dashed", col = "blue")
+  lines(no_ties$t0, no_ties$lowerKM, type = "s", lty = "dashed", col = "red")
+  lines(no_ties$t0, no_ties$upperKM, type = "s", lty = "dashed", col = "red")
+  #lines(with_ties$t0, with_ties$Ahat, type = "s", col = "red")
+  lines(seq, cum_weibull_haz(seq, 4.5,22.5), col = "green")
+  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical", "Confidence Interval"), 
+         col=c("blue", "red", "green", "black"), lty = c(1,1,1,2), cex = 1)
+  
+  #with ties
+  plot(with_ties$t0, with_ties$Ahat, type = "s", xlab = "Time", ylab = "Cumulative hazard", col = "blue", 
+       main = "With ties")
+  lines(with_ties$t0,  with_ties$KMAhat, type = "s", xlab = "Time", col = "red")
+  lines(with_ties$t0, with_ties$lower, type = "s", lty = "dashed", col = "blue")
+  lines(with_ties$t0, with_ties$upper, type = "s", lty = "dashed", col = "blue")
+  lines(with_ties$t0, with_ties$lowerKM, type = "s", lty = "dashed", col = "red")
+  lines(with_ties$t0, with_ties$upperKM, type = "s", lty = "dashed", col = "red")
+  #lines(with_ties$t0, with_ties$Ahat, type = "s", col = "red")
+  lines(seq, cum_weibull_haz(seq, 4.5,22.5), col = "green")
+  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical", "Confidence Interval"), 
+       col=c("blue", "red", "green", "black"), lty = c(1,1,1,2), cex = 1)
+  
+  
+  #This part includes censoring
+  c <- rexp(n, 1/80)
+  censored <- data.frame(t0 = t0, c = c) %>% 
+    mutate(cens = as.numeric(t0>c)) %>%  
+    mutate(t0 = ifelse(cens==1, c, t0)) %>% 
+    mutate(t0_bin = round(t0 + 0.05, digits = 1)) %>% 
+    group_by(t0_bin) %>% 
+    summarise(d0 = sum(cens==0),
+              c0 = sum(cens==1)) %>% 
+    mutate(e0 = d0 + c0) %>% 
+    mutate(y0 = cumsum(e0 %>%  rev()) %>% rev()) %>% 
+    mutate(t0 = as.numeric(t0_bin)) #just for the name, I'm lazy
+  
+  #This is the relevant dataframe in case of censoring (t0, d0, y0)
+  #Should work with or without ties
+  with_censor <- censored %>% 
+    mutate(Ahat = cumsum(d0 / y0)) %>% 
+    mutate(var = cumsum(1/(y0^2))) %>% 
+    mutate(lower = Ahat*exp(-qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
+    mutate(upper = Ahat*exp(+qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
+    mutate(KMhat = cumprod((1-d0/y0))) %>% 
+    mutate(varKM = KMhat^2*cumsum(d0/(y0*(y0-d0)))) %>% 
+    mutate(lowerKM = -log(KMhat-qnorm(0.95) * sqrt(varKM))) %>% 
+    mutate(upperKM = -log(KMhat+qnorm(0.95) * sqrt(varKM))) %>% 
+    mutate(KMAhat = -log(KMhat))
+  
+  #na
+  # plot(no_ties$t0, no_ties$Ahat, type = "s", xlab = "Time", ylab = "Cumulative hazard", 
+  #      main = "Nelson-Aalen")
+  # lines(with_ties$t0, with_ties$Ahat, type = "s", col = "red")
+  # lines(with_censor$t0, with_censor$Ahat, type = "s", col = "blue")
+  # lines(with_censor$t0, with_censor$lower, type = "s", lty = "dashed", col = "blue")
+  # lines(with_censor$t0, with_censor$upper, type = "s", lty = "dashed", col = "blue") 
+  # legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical", "Confidence Interval"), 
+  #      col=c("blue", "red", "green", "black"), lty = c(1,1,1,2), cex = 1)
+  
+  #km
+  # plot(no_ties$t0, no_ties$KMAhat, type = "s", xlab = "Time", ylab = "Cumulative hazard", 
+  #      main = "Kapla-Meier")
+  # lines(with_ties$t0, with_ties$KMAhat, type = "s", col = "red")
+  
+  plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue", xlab = "Time", ylab = "Cumulative hazard",
+       main = "With Censoring")
+  lines(with_censor$t0, with_censor$lower, type = "s", lty = "dashed", col = "blue")
+  lines(with_censor$t0, with_censor$upper, type = "s", lty = "dashed", col = "blue") 
+  lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "red")
+  lines(with_censor$t0, with_censor$lowerKM, type = "s", lty = "dashed", col = "red")
+  lines(with_censor$t0, with_censor$upperKM, type = "s", lty = "dashed", col = "red")
+  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical", "Confidence Interval"), 
+         col=c("blue", "red", "green", "black"), lty = c(1,1,1,2), cex = 1)
+  
+  uncensored <- censored %>% 
+    gather(key = "Type", value = "Number", d0, c0) %>% 
+    filter(Type == "d0") %>% 
+    filter(Number > 0)
+  
+  #Fit weibull distr to uncensored data
+  fitW <- fitdist(uncensored$t0, "weibull", method = "mle", lower = c(0, 0))
+  dwei = dweibull(seq, shape=fitW$estimate["shape"], scale=fitW$estimate["scale"])
+  
+  #hazard NA. very cool
+  plot(with_censor$t0, diff(c(0,with_censor$Ahat)), type = "s", col = "blue", 
+       main = "Hazard Rate", xlab = "Time", ylab = expression(alpha~"(t)"))
+  lines(with_censor$t0, diff(c(0,with_censor$KMAhat)), type = "s", col = "red")
+  lines(seq, weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]), col = "green")
+  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical"), 
+         col=c("blue", "red", "green"), lty = 1, cex = 1)
+  
+  #cumulative hazard
+  plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue",
+       main = "Cumulative Hazard Rate", xlab = "Time", ylab = "A(t)")
+  lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "red")
+  lines(seq, cum_weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]), col = "green")
+  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical"), 
+         col=c("blue", "red", "green"), lty = 1, cex = 1)
 
-#Uses the time intervals for true events to include censoring, this is for computing y0
-events_and_cens <- (t0 %>% cut(breaks = c(0,with_censor$t0)) %>% table() %>% as.data.frame())$Freq
-y0 <- cumsum(events_and_cens %>%  rev()) %>% rev()
+  mtext(paste("For", n, "observations"), side = 3, line = -23.5, outer = TRUE, cex = 1.5)
+  
+}  
 
-#number of censored events in bins of true events
-c0 <- ((data.frame(t0 = t0) %>% 
-  mutate(cens = as.numeric(c<t0)) %>%   
-  mutate(t0_bin = round(t0 + 0.05, digits = 1)) %>% 
-  arrange(t0) %>% 
-  filter(cens == 1))$t0 %>% cut(breaks = c(0,with_censor$t0)) %>% table() %>% as.data.frame())$Freq
-
-
-#This is the relevant dataframe in case of censoring (t0, d0, y0)
-#Should work with or without ties
-with_censor <- with_censor %>% 
-  mutate(c0 = c0) %>% 
-  # mutate(temp = d0 + c0) %>% 
-  # mutate(y0 = cumsum(rev((with_censor %>% mutate(c0 = c0) %>% mutate(temp = d0+c0))$temp)) %>% rev()) %>% 
-  mutate(y0 = y0) %>%
-  mutate(Ahat = cumsum(d0 / y0)) %>% 
-  mutate(var = cumsum(1/(y0^2))) %>% 
-  mutate(lower = Ahat*exp(-qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
-  mutate(upper = Ahat*exp(+qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
-  mutate(KMhat = cumprod((1-d0/y0))) %>% 
-  mutate(varKM = KMhat^2*cumsum(d0/(y0*(y0-d0)))) %>% 
-  mutate(lowerKM = -log(KMhat-qnorm(0.95) * sqrt(varKM))) %>% 
-  mutate(upperKM = -log(KMhat+qnorm(0.95) * sqrt(varKM))) %>% 
-  mutate(KMAhat = -log(KMhat))
-
-#na
-plot(no_ties$t0, no_ties$Ahat, type = "s", xlab = "t", ylab = "Cumulative hazard")
-lines(with_ties$t0, with_ties$Ahat, type = "s", col = "red")
-lines(with_censor$t0, with_censor$Ahat, type = "s", col = "blue")
-lines(with_censor$t0, with_censor$lower, type = "s", lty = "dashed", col = "blue")
-lines(with_censor$t0, with_censor$upper, type = "s", lty = "dashed", col = "blue")
-
-#km
-plot(no_ties$t0, no_ties$KMAhat, type = "s", xlab = "t", ylab = "Cumulative hazard")
-lines(with_ties$t0, with_ties$KMAhat, type = "s", col = "red")
-lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "blue")
-lines(with_censor$t0, with_censor$lowerKM, type = "s", lty = "dashed", col = "blue")
-lines(with_censor$t0, with_censor$upperKM, type = "s", lty = "dashed", col = "blue")
-
-
-
-#Fit weibull distr to uncensored data
-fitW <- fitdist(uncensored$t0, "weibull", method = "mle", lower = c(0, 0))
-#dwei = dweibull(seq, shape=fitW$estimate["shape"], scale=fitW$estimate["scale"])
-
-#hazard NA. very cool
-plot(with_censor$t0, diff(c(0,with_censor$Ahat)), type = "s", col = "blue")
-lines(with_censor$t0, diff(c(0,with_censor$KMAhat)), type = "s", col = "red")
-lines(seq, weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]))
-lines(seq, weibull_haz(seq, 4.5, 22.5), col = "green")
-
-#cumulative hazard
-plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue")
-lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "red")
-lines(seq, cum_weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]))
-lines(seq, cum_weibull_haz(seq, 4.5, 22.5), col = "green")
+plotThings(10)
+  
 ```
 
+Write about n = 10 here
+
+```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+plotThings(100)
+```
+
+Write about n = 100 here
+
+```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+plotThings(200)
+```
+
+Write about n = 200 here
+
+```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+plotThings(500)
+```
+Write about n = 500 here
+
+```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+plotThings(1000)
+```
+
+Write about n = 1000 here
+
+Write a summary here and answer:
+
+• Argue for the performance of the estimators relative to the true theoretical
+model used, is any of the two preferable?
+• What is the effect of censoring?
+• What is the effect of n?
 
