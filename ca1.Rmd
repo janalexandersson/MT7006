@@ -11,11 +11,57 @@ suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(fitdistrplus))
 ```
 
-```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+• Argue for the performance of the estimators relative to the true theoretical
+model used, is any of the two preferable?
 
-plotThings <- function(n){
+• What is the effect of censoring?
+
+• What is the effect of n?
+
+In this computer assignment we aim to estimate the cumulative hazard rate with the Nelson-Aalen estimator and the Kaplan-Meier estimator. However, the Kaplan-Meier estimator estimate the survival funcktion and not the cumulatize hazard rate, but this can be obtained by taking the negative logarithm of the Kaplan-Meier estimator. We chose to present both estimators as cumulative hazard rates so that they can easily be compared. 
+
+We begin by generating $n$ Weibull distributed random numbers from Weibull distribution given by the density function
+
+$$
+f(t; a,b) = \frac{a}{b}(\frac{t}{b})^{a-1} \exp \{-(\frac{t}{b})^a \}, t,a,b \geq 0, 
+$$
+
+where $a=4.5$ and $b=22.5$. This is done for $n = 10, 100, 200, 500$ and $1000$. 
+
+The Nelson-Aalen estimator is given by
+
+$$
+\hat A(t) = \sum_{T_j \leq t} \frac{d_i}{Y(T_j)}, 
+$$
+where $Y(T_j)$ is the number of individuals at risk at time $T_j$ and $d_i$ is the number of events if there is a tie and $1$ if not. 
+
+The Kaplan-Meier estimator is given by
+
+$$
+\hat S(t) = \prod_{T_j \leq t} \bigg(1- \frac{d_i}{Y(T_j)} \bigg). 
+$$
+
+As written earlier, we get the Kaplan-Meier estimate for the cumulative hazard rate by $-\log(\hat S(t))$. In figures 1-5a) we can see the Nelson-Aalen estimate and the Kaplan-Meier estimate compared with the true cumulative hazard rate, in the case of no ties and no censoring. We can also see 95% confidence intervals for the estimates, which are log-transformed Wald intervals.
+We can see that when increasing $n$ our estimates are closer to the theoretical cumulatie hazard rate and our confidence intervals less wide. We also see that tere is not much difference between using the Nelson-Aalen estimate compared to Kaplan-Meier estimate. 
+
+We continued by also computing the Nelson-Aalen and Kaplan-Meier estimates when we only observe total number of events at the end of each interval of length $0.1$, therefore creating "ties". We regard these ties as "true ties". We see in figures 1-5b) that the Kaplan-Meier estimate is slightly more accurate compared to the theoretical and is therefore preferred, however the difference to the Nelson-Aalen estimate is not large. 
+
+Overall the effect of $n$ is that the Nelson-Aalen and Kaplan-Meier estimates are underestimating the cumulative hazard rate for smaller $n$ and also deviates more from the theoretical cumulative hazard rate. 
+
+We then add censoring by generating $n$ exponentially distributed random numbers with mean $80$. We denote these by $C_i$. If $T_i > C_i$ the observation is censored. We can see in figures 1-5c) that when the estimates deviate from the theoretical distribution for when $t$ is large ($t>25$). 
+
+
+ADD MORE HERE ABOUT CENSORING
+
+
+#Appendix
+
+
+```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+n=1000
+plotThings <- function(n, plot_nr){
   
-  par(mfrow=c(2,3))
+  par(mfrow=c(2,2),oma=c(0,0,2,0))
   
   t0 <- rweibull(n, shape = 4.5, scale = 22.5)
   
@@ -63,8 +109,8 @@ plotThings <- function(n){
   
   
   #no ties
-  plot(no_ties$t0, no_ties$Ahat, type = "s", xlab = "Time", ylab = "Cumulative hazard", col = "blue", 
-       main = "Without ties")
+  plot(no_ties$t0, no_ties$Ahat, type = "s", xlab = "Time", ylab = "A(t)", col = "blue", 
+       main = "a) Without ties")
   lines(no_ties$t0,  no_ties$KMAhat, type = "s", col = "red")
   lines(no_ties$t0, no_ties$lower, type = "s", lty = "dashed", col = "blue")
   lines(no_ties$t0, no_ties$upper, type = "s", lty = "dashed", col = "blue")
@@ -76,8 +122,8 @@ plotThings <- function(n){
          col=c("blue", "red", "green", "black"), lty = c(1,1,1,2), cex = 1)
   
   #with ties
-  plot(with_ties$t0, with_ties$Ahat, type = "s", xlab = "Time", ylab = "Cumulative hazard", col = "blue", 
-       main = "With ties")
+  plot(with_ties$t0, with_ties$Ahat, type = "s", xlab = "Time", ylab = "A(t)", col = "blue", 
+       main = "b) With ties")
   lines(with_ties$t0,  with_ties$KMAhat, type = "s", xlab = "Time", col = "red")
   lines(with_ties$t0, with_ties$lower, type = "s", lty = "dashed", col = "blue")
   lines(with_ties$t0, with_ties$upper, type = "s", lty = "dashed", col = "blue")
@@ -130,13 +176,14 @@ plotThings <- function(n){
   #      main = "Kapla-Meier")
   # lines(with_ties$t0, with_ties$KMAhat, type = "s", col = "red")
   
-  plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue", xlab = "Time", ylab = "Cumulative hazard",
-       main = "With Censoring")
+  plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue", xlab = "Time", ylab = "A(t)",
+       main = "c) With Censoring")
   lines(with_censor$t0, with_censor$lower, type = "s", lty = "dashed", col = "blue")
   lines(with_censor$t0, with_censor$upper, type = "s", lty = "dashed", col = "blue") 
   lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "red")
   lines(with_censor$t0, with_censor$lowerKM, type = "s", lty = "dashed", col = "red")
   lines(with_censor$t0, with_censor$upperKM, type = "s", lty = "dashed", col = "red")
+  lines(seq, cum_weibull_haz(seq, 4.5,22.5), col = "green")
   legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical", "Confidence Interval"), 
          col=c("blue", "red", "green", "black"), lty = c(1,1,1,2), cex = 1)
   
@@ -150,58 +197,49 @@ plotThings <- function(n){
   dwei = dweibull(seq, shape=fitW$estimate["shape"], scale=fitW$estimate["scale"])
   
   #hazard NA. very cool
-  plot(with_censor$t0, diff(c(0,with_censor$Ahat)), type = "s", col = "blue", 
-       main = "Hazard Rate", xlab = "Time", ylab = expression(alpha~"(t)"))
-  lines(with_censor$t0, diff(c(0,with_censor$KMAhat)), type = "s", col = "red")
-  lines(seq, weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]), col = "green")
-  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical"), 
-         col=c("blue", "red", "green"), lty = 1, cex = 1)
+  # plot(with_censor$t0, diff(c(0,with_censor$Ahat)), type = "s", col = "blue", 
+  #      main = "Hazard Rate", xlab = "Time", ylab = expression(alpha~"(t)"))
+  # lines(with_censor$t0, diff(c(0,with_censor$KMAhat)), type = "s", col = "red")
+  # lines(seq, weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]), col = "green")
+  # legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical"), 
+  #        col=c("blue", "red", "green"), lty = 1, cex = 1)
   
   #cumulative hazard
   plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue",
-       main = "Cumulative Hazard Rate", xlab = "Time", ylab = "A(t)")
+       main = "d) Fitted Weibull with censoring", xlab = "Time", ylab = "A(t)")
   lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "red")
   lines(seq, cum_weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]), col = "green")
   legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical"), 
          col=c("blue", "red", "green"), lty = 1, cex = 1)
 
-  mtext(paste("For", n, "observations"), side = 3, line = -23.5, outer = TRUE, cex = 1.5)
-  
+  # mtext(paste("For", n, "observations"), side = 3, line = -23.5, outer = TRUE, cex = 1.5)
+  title(paste("Figure", plot_nr, ":",  "For", n, "observations"), outer=TRUE, cex=2)
 }  
 
-plotThings(10)
+plotThings(10, 1)
   
 ```
 
-Write about n = 10 here
 
 ```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
-plotThings(100)
+plotThings(100, 2)
 ```
 
-Write about n = 100 here
 
 ```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
-plotThings(200)
+plotThings(200, 3)
 ```
 
-Write about n = 200 here
 
 ```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
-plotThings(500)
+plotThings(500, 4)
 ```
-Write about n = 500 here
+
 
 ```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
-plotThings(1000)
+plotThings(1000, 5)
 ```
 
-Write about n = 1000 here
 
-Write a summary here and answer:
 
-• Argue for the performance of the estimators relative to the true theoretical
-model used, is any of the two preferable?
-• What is the effect of censoring?
-• What is the effect of n?
 
