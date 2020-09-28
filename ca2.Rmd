@@ -1,0 +1,64 @@
+---
+title: "Computer Assignment 2"
+author: "Jan Alexandersson, Anton Stråhle & Max Sjödin"
+date: "September 19, 2020"
+output: pdf_document
+---
+
+```{r echo = FALSE, warning = FALSE}
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(knitr))
+suppressPackageStartupMessages(library(fitdistrplus))
+```
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+t1 <- cbind(rweibull(200, shape = 5.5, scale = 22.5), rep(1, 200))
+
+t2 <- cbind(rweibull(100, shape = 4.5, scale = 28), rep(2,100))
+
+times <- rbind(t1, t2) %>%
+  data.frame() %>% 
+  setNames(c("Time", "Type")) %>% 
+  group_by(Type) %>% 
+  arrange(Time) %>% 
+  mutate(d = 1,
+         y = cumsum(d %>% rev()) %>% rev(),
+         nelAal = cumsum(d/y),
+         km = cumprod(1 - d/y)) 
+
+
+times$Type = as.factor(times$Type)
+
+#Different Nelson-Aalens
+
+times %>%
+  ggplot(aes(x = Time, y = nelAal, color = Type)) +
+    geom_line(size = 0.8)
+
+
+
+#Logrank. Oklart om detta är rätt?
+
+logRankData <- times %>% 
+  ungroup() %>% 
+  mutate(d1 = ifelse(Type == 1, 1, 0),
+         d2 = ifelse(Type == 2, 1, 0),
+         yBoth = cumsum(d %>% rev()) %>% rev(),
+         y1 = cumsum(d1 %>% rev()) %>% rev(),
+         y2 = cumsum(d2 %>% rev()) %>% rev(),
+         Z1 = cumsum(d1) - cumsum(y1*d/yBoth),
+         varZ1 = y1*y2*d/yBoth^2,
+         testStat = Z1/sqrt(varZ1)) 
+
+
+#Kaplan-Meier
+
+times %>% 
+  ggplot(aes(x = Time, y = km, color = Type)) +
+    geom_line(size = 0.8)
+  
+
+```
+
