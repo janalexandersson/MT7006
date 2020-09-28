@@ -50,14 +50,15 @@ Overall the effect of $n$ is that the Nelson-Aalen and Kaplan-Meier estimates ar
 
 We then add censoring by generating $n$ exponentially distributed random numbers with mean $80$. We denote these by $C_i$. If $T_i > C_i$ the observation is censored. We can see in figures 1-5c) that when the estimates deviate from the theoretical distribution for when $t$ is large ($t>25$). 
 
-
-ADD MORE HERE ABOUT CENSORING
+Since the expected value of the $C_i$'s are large compared to the $T_i$'s we can expect more censoring for larger values of $t$. That is, we can expect the main effect of the censoring to show for larger values of $t$. For smaller $n$ we can not say much about the effect because of the uncertainty in the estimates. However, for large values of $n$ (see Figure 4d) and 5d) we can see a clear difference. We see that fitting a distribution to the censored data while only taking uncensored datapoints into account will lead to bad estimates with regards to the dataset when we also take censored observations into account. We can see in Figure 4d) and 5d) that fitting without regards to the censoring will clearly underestimate the cumulative hazard rate in the end of the time period and that both Nelson-Aalen and Kaplan-Meier estimate is close to the true cumulative hazard rate, thus performing well also with censored data. 
 
 
 #Appendix
 
 
 ```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+set.seed(1337)
+
 n=1000
 plotThings <- function(n, plot_nr){
   
@@ -88,7 +89,10 @@ plotThings <- function(n, plot_nr){
     set_names(c("t0","d0")) %>% 
     mutate(y0 = cumsum(d0 %>%  rev()) %>% rev()) %>% 
     mutate(t0 = as.numeric(as.character(t0))) %>% 
-    mutate(Ahat = cumsum(d0 / y0)) %>% 
+    mutate(Ahat = cumsum(d0 / y0)) %>%
+    mutate(var = cumsum(1/(y0^2))) %>% 
+    mutate(lower = Ahat*exp(-qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
+    mutate(upper = Ahat*exp(+qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
     mutate(KMhat = cumprod((1-d0/y0))) %>% 
     mutate(varKM = KMhat^2*cumsum(d0/(y0*(y0-d0)))) %>% 
     mutate(lowerKM = -log(KMhat-qnorm(0.95) * sqrt(varKM))) %>% 
@@ -208,8 +212,9 @@ plotThings <- function(n, plot_nr){
   plot(with_censor$t0, with_censor$Ahat, type = "s", col = "blue",
        main = "d) Fitted Weibull with censoring", xlab = "Time", ylab = "A(t)")
   lines(with_censor$t0, with_censor$KMAhat, type = "s", col = "red")
-  lines(seq, cum_weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]), col = "green")
-  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical"), 
+  lines(seq, cum_weibull_haz(seq, fitW$estimate["shape"], fitW$estimate["scale"]), col = "black")
+  lines(seq, cum_weibull_haz(seq, 4.5,22.5), col = "green")
+  legend("topleft", legend=c("Nelson-Aalen", "Kaplan-Meier", "Theoretical", "Fitted to uncensored"), 
          col=c("blue", "red", "green"), lty = 1, cex = 1)
 
   # mtext(paste("For", n, "observations"), side = 3, line = -23.5, outer = TRUE, cex = 1.5)
