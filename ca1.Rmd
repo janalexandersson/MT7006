@@ -48,6 +48,7 @@ We continued by computing the Nelson-Aalen and Kaplan-Meier estimates whilst onl
 
 #TA BORT NEDAN
 Overall the effect of the sample size $n$ seems to be that the Nelson-Aalen and Kaplan-Meier estimates are underestimating the cumulative hazard rate for smaller $n$ and also deviates more from the theoretical cumulative hazard rate. 
+
 #TA BORT OVAN
 
 We then add censoring by generating $n$ exponentially distributed random numbers with mean $80$. We denote these by $C_i$. If $T_i > C_i$ the observation is censored. We can see in figures 1-5c) that when the estimates deviate from the theoretical distribution when $t$ is large ($t>25$). 

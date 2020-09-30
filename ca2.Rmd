@@ -8,23 +8,31 @@ output: pdf_document
 ```{r echo = FALSE, warning = FALSE}
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(knitr))
-suppressPackageStartupMessages(library(fitdistrplus))
+suppressPackageStartupMessages(library(survival))
 ```
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE}
 
+#Cens Unif(20, 60)
+
 t1 <- cbind(rweibull(200, shape = 5.5, scale = 22.5), rep(1, 200))
 
 t2 <- cbind(rweibull(100, shape = 4.5, scale = 28), rep(2,100))
 
+c <- cbind(runif(300, 20, 60))
+
 times <- rbind(t1, t2) %>%
+  cbind(c) %>% 
   data.frame() %>% 
-  setNames(c("Time", "Type")) %>% 
+  setNames(c("Time", "Type", "C")) %>% 
+  mutate(c = ifelse(Time > C, 1, 0),
+         Time = ifelse(Time > C, C, Time),
+         d = 1 - c,
+         e = c + d) %>% 
   group_by(Type) %>% 
   arrange(Time) %>% 
-  mutate(d = 1,
-         y = cumsum(d %>% rev()) %>% rev(),
+  mutate(y = cumsum(e %>% rev()) %>% rev(),
          nelAal = cumsum(d/y),
          km = cumprod(1 - d/y)) 
 
@@ -39,19 +47,28 @@ times %>%
 
 
 
-#Logrank. Oklart om detta är rätt?
+#Logrank. Vill vi ha chi2 eller wald-test?
 
 logRankData <- times %>% 
   ungroup() %>% 
-  mutate(d1 = ifelse(Type == 1, 1, 0),
-         d2 = ifelse(Type == 2, 1, 0),
-         yBoth = cumsum(d %>% rev()) %>% rev(),
-         y1 = cumsum(d1 %>% rev()) %>% rev(),
-         y2 = cumsum(d2 %>% rev()) %>% rev(),
+  mutate(d1 = ifelse(Type == 1, d, 0),
+         d2 = ifelse(Type == 2, d, 0),
+         c1 = ifelse(Type == 1, c, 0),
+         c2 = ifelse(Type == 2, c, 0),
+         e1 = d1 + c1,
+         e2 = d2 + c2) %>% 
+  mutate(yBoth = cumsum(e %>% rev()) %>% rev(),
+         y1 = cumsum(e1 %>% rev()) %>% rev(),
+         y2 = cumsum(e2 %>% rev()) %>% rev(),
          Z1 = cumsum(d1) - cumsum(y1*d/yBoth),
-         varZ1 = y1*y2*d/yBoth^2,
-         testStat = Z1/sqrt(varZ1)) 
+         varZ1 = cumsum(y1*y2*d/yBoth^2),
+         testStat = Z1/sqrt(varZ1))
 
+logRankData %>% 
+  ggplot(aes(x = Time, y = testStat)) +
+    geom_line(size = 0.8) +
+    geom_line(aes(x = Time, y = -1.96), size = 0.8, color = "blue") +
+    geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue")
 
 #Kaplan-Meier
 
@@ -59,6 +76,79 @@ times %>%
   ggplot(aes(x = Time, y = km, color = Type)) +
     geom_line(size = 0.8)
   
+#Cox Regression
 
+times$SurvObj <- with(times, Surv(Time, d == 1))
+
+tm <- coxph(SurvObj ~ Type, data = times)
+
+summary(tm)
+
+```
+
+```{r echo = FALSE, warning = FALSE, message = FALSE}
+
+t1 <- cbind(rweibull(200, shape = 5.5, scale = 22.5), rep(1, 200), runif(200, 20, 60))
+
+t2 <- cbind(rweibull(100, shape = 4.5, scale = 28), rep(2,100), runif(100, 30, 60))
+
+times <- rbind(t1, t2) %>%
+  data.frame() %>% 
+  setNames(c("Time", "Type", "C")) %>% 
+  mutate(c = ifelse(Time > C, 1, 0),
+         Time = ifelse(Time > C, C, Time),
+         d = 1 - c,
+         e = c + d) %>% 
+  group_by(Type) %>% 
+  arrange(Time) %>% 
+  mutate(y = cumsum(e %>% rev()) %>% rev(),
+         nelAal = cumsum(d/y),
+         km = cumprod(1 - d/y)) 
+
+
+times$Type = as.factor(times$Type)
+
+#Different Nelson-Aalens
+
+times %>%
+  ggplot(aes(x = Time, y = nelAal, color = Type)) +
+    geom_line(size = 0.8)
+
+#Logrank. Vill vi ha chi2 eller wald-test?
+
+logRankData <- times %>% 
+  ungroup() %>% 
+  mutate(d1 = ifelse(Type == 1, d, 0),
+         d2 = ifelse(Type == 2, d, 0),
+         c1 = ifelse(Type == 1, c, 0),
+         c2 = ifelse(Type == 2, c, 0),
+         e1 = d1 + c1,
+         e2 = d2 + c2) %>% 
+  mutate(yBoth = cumsum(e %>% rev()) %>% rev(),
+         y1 = cumsum(e1 %>% rev()) %>% rev(),
+         y2 = cumsum(e2 %>% rev()) %>% rev(),
+         Z1 = cumsum(d1) - cumsum(y1*d/yBoth),
+         varZ1 = cumsum(y1*y2*d/yBoth^2),
+         testStat = Z1/sqrt(varZ1))
+
+logRankData %>% 
+  ggplot(aes(x = Time, y = testStat)) +
+    geom_line(size = 0.8) +
+    geom_line(aes(x = Time, y = -1.96), size = 0.8, color = "blue") +
+    geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue")
+
+#Kaplan-Meier
+
+times %>% 
+  ggplot(aes(x = Time, y = km, color = Type)) +
+    geom_line(size = 0.8)
+  
+#Cox Regression
+
+times$SurvObj <- with(times, Surv(Time, d == 1))
+
+tm <- coxph(SurvObj ~ Type, data = times)
+
+summary(tm)
 ```
 
