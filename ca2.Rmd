@@ -12,8 +12,32 @@ suppressPackageStartupMessages(library(survival)) #https://stackoverflow.com/que
 suppressPackageStartupMessages(library(survminer))
 ```
 
+• Since you know that data is generated using certain Weibull distributions,
+you know whether or not the proportional hazards assumption is fulfilled -
+can you based on the Nelson-Aalen (or Kaplan-Meier) estimates say something about the assumption regarding proportional hazard?
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
+• What does the logrank test say?
+
+• Is there a difference between the two groups with respect to estimated
+regression coefficients?
+
+• Comment on the comparison between the Kaplan-Meier curves and the
+Cox-curves.
+
+• What is the effect of that the censoring is group dependent?
+
+In this computer asssignment we aim to compare the survival rates of two groups using several different methods. The population is split (not evenly) into two types, henceforth called types 1 and types 2 containing 200 and 100 individuals respectivley. Their survival times are generated randomly from Weibull distributions as follows.
+
+\begin{align*}
+  T_i^{(1)} &\sim \text{WB}(5.5, 22.5) \\
+  T_i^{(2)} &\sim \text{WB}(4.5, 28)
+\end{align*}
+
+We also implement independent censoring using $\text{Unif}(20,60)$-censoring times.
+
+We start of by plotting the Nelson-Aalen estimates of the two groups
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width= 10, fig.height = 6}
 
 #Cens Unif(20, 60)
 
@@ -44,9 +68,14 @@ times$Type = as.factor(times$Type)
 
 times %>%
   ggplot(aes(x = Time, y = nelAal, color = Type)) +
-    geom_line(size = 0.8)
+    geom_line(size = 0.8) +
+    ylab("Cumulative Hazard Rate")
 
+```
 
+From the figure above we see that the cumulative hazard rate for individuals of type 1 greatly exceeds that of those of type 2. We continue on by carrying out a logrank test for $\text{H}_0: \alpha_1(t) = \alpha_2(t)$ for all $t \in [0, t_0]$ where $t_0$ is the upper limit of the study time interval.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width= 10, fig.height = 6}
 
 #Logrank. Vill vi ha chi2 eller wald-test?
 
@@ -69,26 +98,49 @@ logRankData %>%
   ggplot(aes(x = Time, y = testStat)) +
     geom_line(size = 0.8) +
     geom_line(aes(x = Time, y = -1.96), size = 0.8, color = "blue") +
-    geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue")
+    geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue") +
+    ylab(expression(Z[1](t)))
 
-#Kaplan-Meier
+```
 
-times %>% 
-  ggplot(aes(x = Time, y = km, color = Type)) +
-    geom_line(size = 0.8)
-  
+We see from the figure above that $H_0$ can be rejected on the 5%-level as $Z_1(t_0)$ exceeds $\Phi(0.975)$. Next up is a to fit a Cox regression model to our data.
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width= 10, fig.height = 6}
 #Cox Regression
 
 times$SurvObj <- with(times, Surv(Time, d == 1))
 
 tm <- coxph(SurvObj ~ as.factor(Type), data = times)
 
-ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))), 
-           data = times)
+summary(tm)
 
 ```
 
-```{r echo = FALSE, warning = FALSE, message = FALSE}
+We see from the model summary above that the performed Wald test yields a highly significant difference between the two types. We can alos compare the survival curves obtained by the Kaplan-Meier estimator and those obtained via the Cox regression. 
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width= 10, fig.height = 6}
+
+#Kaplan-Meier
+
+times %>% 
+  ggplot(aes(x = Time, y = km, color = Type)) +
+    geom_line(size = 0.8) +
+    ylab("Kaplan-Meier Estimate")
+
+ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))), 
+           data = times) +
+           ylab("Cox Estimate")
+
+```
+
+We see that the two figures are pretty much identical. We also note from the Kaplan-Meier curves (as well as from the those obtained via Cox regression) that the assumption of proportional hazards seems to be somewhat fulfilled as the effect of Type seems to be somehwta constant over time (ignoring the endpoints of the interval).
+
+\newpage
+
+Lastly we want to examine the differences that occur when we use dependent instead of independent censoring. As such we censor individuals of type 1 with $\text{Unif}(20,60)$ censoring times as before whilst changin the distribution of censoring times for type 2 individuals to $\text{Unif}(30,60)$ 
+
+
+```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width=10, fig.height = 6}
 
 t1 <- cbind(rweibull(200, shape = 5.5, scale = 22.5), rep(1, 200), runif(200, 20, 60))
 
@@ -114,7 +166,8 @@ times$Type = as.factor(times$Type)
 
 times %>%
   ggplot(aes(x = Time, y = nelAal, color = Type)) +
-    geom_line(size = 0.8)
+    geom_line(size = 0.8) +
+    ylab("Cumulative Hazard Rate")
 
 #Logrank. Vill vi ha chi2 eller wald-test?
 
@@ -143,7 +196,8 @@ logRankData %>%
 
 times %>% 
   ggplot(aes(x = Time, y = km, color = Type)) +
-    geom_line(size = 0.8)
+    geom_line(size = 0.8) +
+    ylab("Kaplan-Meier Estimate")
   
 #Cox Regression
 
@@ -152,7 +206,9 @@ times$SurvObj <- with(times, Surv(Time, d == 1))
 tm <- coxph(SurvObj ~ as.factor(Type), data = times)
 
 ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))), 
-           data = times)
+           data = times) +
+           ylab("Cox Estimate")
 
 ```
 
+Visually there are not many differences when comparing the results. The main takeaway is that we have fewer "early" censorings for type 2 indviduals in the case of dependent censoring which leads to even lower cumulative hazard rates (as can be seen when comparing the figures including the Nelson-Aalen estimates) and higher survival rates (as can be seen when comparing the survival curves obtained through Kaplan-Meier and Cox regerssion).
