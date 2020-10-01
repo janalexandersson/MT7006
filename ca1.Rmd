@@ -46,10 +46,9 @@ We see that by increasing $n$ our estimates move closer to eachother as well as 
 
 We continued by computing the Nelson-Aalen and Kaplan-Meier estimates whilst only observing the total number of events at the end of each interval of length $0.1$, therefore creating "ties". We regard these ties as "true ties". We see in figures 1-5b) that the Kaplan-Meier estimate is slightly more accurate compared to the theoretical counterpart and is therefore preferred, however the difference compared to the Nelson-Aalen estimator is once again not very large. 
 
-#TA BORT NEDAN
-Overall the effect of the sample size $n$ seems to be that the Nelson-Aalen and Kaplan-Meier estimates are underestimating the cumulative hazard rate for smaller $n$ and also deviates more from the theoretical cumulative hazard rate. 
 
-#TA BORT OVAN
+<!-- Overall the effect of the sample size $n$ seems to be that the Nelson-Aalen and Kaplan-Meier estimates are underestimating the cumulative hazard rate for smaller $n$ and also deviates more from the theoretical cumulative hazard rate.  -->
+We can see that when increasing $n$ the confidence intervals gets more narrow but still capture the true distribution until $t$ gets high. We notice that the fit is worse for the last observations, for all values of $n$, which we can expect since the jumpsize is larger when we have less observations left. That is, the estimators have higher variance the fever observations we have left. 
 
 We then add censoring by generating $n$ exponentially distributed random numbers with mean $80$. We denote these by $C_i$. If $T_i > C_i$ the observation is censored. We can see in figures 1-5c) that when the estimates deviate from the theoretical distribution when $t$ is large ($t>25$). 
 
