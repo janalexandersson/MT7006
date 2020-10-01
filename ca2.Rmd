@@ -8,7 +8,8 @@ output: pdf_document
 ```{r echo = FALSE, warning = FALSE}
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(knitr))
-suppressPackageStartupMessages(library(survival))
+suppressPackageStartupMessages(library(survival)) #https://stackoverflow.com/questions/35207624/package-pbkrtest-is-not-available-for-r-version-3-2-2
+suppressPackageStartupMessages(library(survminer))
 ```
 
 
@@ -80,9 +81,10 @@ times %>%
 
 times$SurvObj <- with(times, Surv(Time, d == 1))
 
-tm <- coxph(SurvObj ~ Type, data = times)
+tm <- coxph(SurvObj ~ as.factor(Type), data = times)
 
-summary(tm)
+ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))), 
+           data = times)
 
 ```
 
@@ -147,8 +149,10 @@ times %>%
 
 times$SurvObj <- with(times, Surv(Time, d == 1))
 
-tm <- coxph(SurvObj ~ Type, data = times)
+tm <- coxph(SurvObj ~ as.factor(Type), data = times)
 
-summary(tm)
+ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))), 
+           data = times)
+
 ```
 
