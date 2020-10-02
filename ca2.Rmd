@@ -103,7 +103,13 @@ logRankData %>%
 
 ```
 
-We see from the figure above that $H_0$ can be rejected on the 5%-level as $Z_1(t_0)$ exceeds $\Phi(0.975)$. Next up is a to fit a Cox regression model to our data.
+We see from the figure above that $H_0$ can be rejected on the 5%-level as $Z_1(t_0)$ exceeds $\Phi(0.975)$. Next up is to fit a Cox regression model to our data. We have that
+
+$$
+\alpha(t|x_i) = \alpha_0(t)e^{\beta x_i} \quad \text{where } x_i = \mathbf{1}_{\{\text{i}\in\text{type 2}\}}
+$$
+
+After fitting we get the following,
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width= 10, fig.height = 6}
 #Cox Regression
