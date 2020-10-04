@@ -106,8 +106,9 @@ logRankData %>%
 We see from the figure above that $H_0$ can be rejected on the 5%-level as $Z_1(t_0)$ exceeds $\Phi(0.975)$. Next up is to fit a Cox regression model to our data. We have that
 
 $$
-\alpha(t|x_i) = \alpha_0(t)e^{\beta x_i} \quad \text{where } x_i = \mathbf{1}_{\{\text{i}\in\text{type 2}\}}
+\alpha(t|x_i) = \alpha_0(t)e^{\beta x_i} \quad \text{where } x_i = \mathbf{1}_{\{\text{i}\in\text{type 2}\}},
 $$
+where $\alpha (t|x_i)$ is the hazard rate for individual $i$ and $\alpha_0(t)$ is the baseline hazard rate. Since, $x_i = 0$ for type $1$ we see that $\alpha_0(t)$ corresponds to the hazard rate of type $1$ and $e^{\beta}$ is the relative risk for type $2$. 
 
 After fitting we get the following,
 
@@ -122,7 +123,8 @@ summary(tm)
 
 ```
 
-We see from the model summary above that the performed Wald test yields a highly significant difference between the two types. We can alos compare the survival curves obtained by the Kaplan-Meier estimator and those obtained via the Cox regression. 
+From the summary we see that we have $\hat \beta = $ `r summary(tm)$coef[1]` and the estimated relative risk $e^{\hat \beta} = $ `r exp(summary(tm)$coef[1])`.
+We see from the model summary above that the performed Wald test yields a highly significant difference between the two types. We can also compare the survival curves obtained by the Kaplan-Meier estimator and those obtained via the Cox regression. 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width= 10, fig.height = 6}
 
@@ -217,4 +219,4 @@ ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))),
 
 ```
 
-Visually there are not many differences when comparing the results. The main takeaway is that we have fewer "early" censorings for type 2 indviduals in the case of dependent censoring which leads to even lower cumulative hazard rates (as can be seen when comparing the figures including the Nelson-Aalen estimates) and higher survival rates (as can be seen when comparing the survival curves obtained through Kaplan-Meier and Cox regerssion).
+Visually there are not many differences when comparing the results. The main takeaway is that we have fewer "early" censorings for type 2 indviduals in the case of dependent censoring which leads to even lower cumulative hazard rates (as can be seen when comparing the figures including the Nelson-Aalen estimates) and higher survival rates (as can be seen when comparing the survival curves obtained through Kaplan-Meier and Cox regerssion). Also, when redoing the previous tests, both the logrank and when refitting the Cox model we get very similar results. 
