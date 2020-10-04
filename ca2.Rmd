@@ -123,7 +123,7 @@ summary(tm)
 
 ```
 
-From the summary we see that we have $\hat \beta = $ `r summary(tm)$coef[1]` and the estimated relative risk $e^{\hat \beta} = $ `r exp(summary(tm)$coef[1])`.
+From the summary we see that we have $\hat\beta =$ `r summary(tm)$coef[1]` and the estimated relative risk $e^{\hat\beta} =$ `r exp(summary(tm)$coef[1])`.
 We see from the model summary above that the performed Wald test yields a highly significant difference between the two types. We can also compare the survival curves obtained by the Kaplan-Meier estimator and those obtained via the Cox regression. 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width= 10, fig.height = 6}
