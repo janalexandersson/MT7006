@@ -12,19 +12,19 @@ suppressPackageStartupMessages(library(survival)) #https://stackoverflow.com/que
 suppressPackageStartupMessages(library(survminer))
 ```
 
-• Since you know that data is generated using certain Weibull distributions,
-you know whether or not the proportional hazards assumption is fulfilled -
-can you based on the Nelson-Aalen (or Kaplan-Meier) estimates say something about the assumption regarding proportional hazard?
+<!-- • Since you know that data is generated using certain Weibull distributions, -->
+<!-- you know whether or not the proportional hazards assumption is fulfilled - -->
+<!-- can you based on the Nelson-Aalen (or Kaplan-Meier) estimates say something about the assumption regarding proportional hazard? -->
 
-• What does the logrank test say?
+<!-- • What does the logrank test say? -->
 
-• Is there a difference between the two groups with respect to estimated
-regression coefficients?
+<!-- • Is there a difference between the two groups with respect to estimated -->
+<!-- regression coefficients? -->
 
-• Comment on the comparison between the Kaplan-Meier curves and the
-Cox-curves.
+<!-- • Comment on the comparison between the Kaplan-Meier curves and the -->
+<!-- Cox-curves. -->
 
-• What is the effect of that the censoring is group dependent?
+<!-- • What is the effect of that the censoring is group dependent? -->
 
 In this computer asssignment we aim to compare the survival rates of two groups using several different methods. The population is split (not evenly) into two types, henceforth called types 1 and types 2 containing 200 and 100 individuals respectivley. Their survival times are generated randomly from Weibull distributions as follows.
 
