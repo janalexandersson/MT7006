@@ -157,6 +157,7 @@ plotThings <- function(n, plot_nr){
   #This is the relevant dataframe in case of censoring (t0, d0, y0)
   #Should work with or without ties
   with_censor <- censored %>% 
+    filter(d0 > 0) %>% 
     mutate(Ahat = cumsum(d0 / y0)) %>% 
     mutate(var = cumsum(1/(y0^2))) %>% 
     mutate(lower = Ahat*exp(-qnorm(0.95) * sqrt(var)/ Ahat)) %>% 
