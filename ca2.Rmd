@@ -141,11 +141,11 @@ ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))),
 
 ```
 
-We see that the two figures are pretty much identical. We also note from the Kaplan-Meier curves (as well as from the those obtained via Cox regression) that the assumption of proportional hazards seems to be somewhat fulfilled as the effect of Type seems to be somehwta constant over time (ignoring the endpoints of the interval).
+We see that the two figures are pretty much identical. We also note from the Kaplan-Meier curves that the assumption of proportional hazards seems to be somewhat fulfilled as the effect of Type seems to be somewhat constant over time (ignoring the endpoints of the interval).
 
 \newpage
 
-Lastly we want to examine the differences that occur when we use dependent instead of independent censoring. As such we censor individuals of type 1 with $\text{Unif}(20,60)$ censoring times as before whilst changin the distribution of censoring times for type 2 individuals to $\text{Unif}(30,60)$ 
+Lastly we want to examine the differences that occur when we use dependent instead of independent censoring. As such we censor individuals of type 1 with $\text{Unif}(20,60)$ censoring times as before whilst changing the distribution of censoring times for type 2 individuals to $\text{Unif}(30,60)$ 
 
 
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.width=10, fig.height = 6}
