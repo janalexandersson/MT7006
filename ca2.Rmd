@@ -141,7 +141,7 @@ ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))),
 
 ```
 
-We see that the two figures are pretty much identical. We also note from the Kaplan-Meier curves that the assumption of proportional hazards seems to be somewhat fulfilled as the effect of Type seems to be somewhat constant over time (ignoring the endpoints of the interval).
+We see that the two figures are pretty much identical. We also note from the Kaplan-Meier curves that the assumption of proportional hazards seems to be somewhat fulfilled as the effect of Type seems to be somewhat constant over time (ignoring the endpoints of the interval) and since the two lines dont seem to cross.
 
 \newpage
 
@@ -219,4 +219,4 @@ ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))),
 
 ```
 
-Visually there are not many differences when comparing the results. The main takeaway is that we have fewer "early" censorings for type 2 indviduals in the case of dependent censoring which leads to even lower cumulative hazard rates (as can be seen when comparing the figures including the Nelson-Aalen estimates) and higher survival rates (as can be seen when comparing the survival curves obtained through Kaplan-Meier and Cox regerssion). Also, when redoing the previous tests, both the logrank and when refitting the Cox model we get very similar results. 
+Visually there are not many differences when comparing the results. The main takeaway is that we have fewer "early" censorings for type 2 indviduals in the case of dependent censoring which leads to even lower cumulative hazard rates (as can be seen when comparing the figures including the Nelson-Aalen estimates) and higher survival rates (as can be seen when comparing the survival curves obtained through Kaplan-Meier and Cox regerssion). Also, when redoing the previous tests, both the logrank and when refitting the Cox model we get very similar results. We do however note that the assumption of proprotional hazard can be questioned as the two lines actualy intersect.
