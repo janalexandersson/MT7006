@@ -94,16 +94,16 @@ logRankData <- times %>%
          varZ1 = cumsum(y1*y2*d/yBoth^2),
          testStat = Z1/sqrt(varZ1))
 
-logRankData %>% 
-  ggplot(aes(x = Time, y = testStat)) +
-    geom_line(size = 0.8) +
-    geom_line(aes(x = Time, y = -1.96), size = 0.8, color = "blue") +
-    geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue") +
-    ylab(expression(Z[1](t)))
+# logRankData %>% 
+#   ggplot(aes(x = Time, y = testStat)) +
+#     geom_line(size = 0.8) +
+#     geom_line(aes(x = Time, y = -1.96), size = 0.8, color = "blue") +
+#     geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue") +
+#     ylab("Test Statistic")
 
 ```
 
-We see from the figure above that $H_0$ can be rejected on the 5%-level as $Z_1(t_0)$ exceeds $\Phi(0.975)$. Next up is to fit a Cox regression model to our data. We have that
+$H_0$ can be rejected on the 5%-level as $\frac{Z_1(t_0)}{\sqrt{V_{11}(t_0)}}=$ `r logRankData$testStat %>% tail(1)` exceeds $\Phi(0.975)$. Next up is to fit a Cox regression model to our data. We have that
 
 $$
 \alpha(t|x_i) = \alpha_0(t)e^{\beta x_i} \quad \text{where } x_i = \mathbf{1}_{\{\text{i}\in\text{type 2}\}},
@@ -194,11 +194,11 @@ logRankData <- times %>%
          varZ1 = cumsum(y1*y2*d/yBoth^2),
          testStat = Z1/sqrt(varZ1))
 
-logRankData %>% 
-  ggplot(aes(x = Time, y = testStat)) +
-    geom_line(size = 0.8) +
-    geom_line(aes(x = Time, y = -1.96), size = 0.8, color = "blue") +
-    geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue")
+# logRankData %>% 
+#   ggplot(aes(x = Time, y = testStat)) +
+#     geom_line(size = 0.8) +
+#     geom_line(aes(x = Time, y = -1.96), size = 0.8, color = "blue") +
+#     geom_line(aes(x = Time, y = 1.96), size = 0.8, color = "blue")
 
 #Kaplan-Meier
 
@@ -219,4 +219,4 @@ ggsurvplot(survfit(tm, newdata = data.frame("Type" = c(1, 2))),
 
 ```
 
-Visually there are not many differences when comparing the results. The main takeaway is that we have fewer "early" censorings for type 2 indviduals in the case of dependent censoring which leads to even lower cumulative hazard rates (as can be seen when comparing the figures including the Nelson-Aalen estimates) and higher survival rates (as can be seen when comparing the survival curves obtained through Kaplan-Meier and Cox regerssion). Also, when redoing the previous tests, both the logrank and when refitting the Cox model we get very similar results. We do however note that the assumption of proprotional hazard can be questioned as the two lines actually intersect.
+Visually there are not many differences when comparing the results. The main takeaway is that we have fewer "early" censorings for type 2 indviduals in the case of dependent censoring which leads to even lower cumulative hazard rates (as can be seen when comparing the figures including the Nelson-Aalen estimates) and higher survival rates (as can be seen when comparing the survival curves obtained through Kaplan-Meier and Cox regerssion). Also, when redoing the previous tests, both the logrank and when refitting the Cox model we get very similar results. We do however note that the assumption of proprotional hazard can be questioned as the two lines actually intersect. We also note that the log-rank test statistic is `r logRankData$testStat %>% tail(1)` which means that we can reject $H_0$ again.
