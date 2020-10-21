@@ -18,7 +18,7 @@
 
 \textbf{Basic Relations}
 
-$S(t) = \exp(-\int_0^t \alpha(s)ds) \qquad A(t) = \int_0^t \alpha(s)ds \qquad -S'(t) = \alpha(t)S(t) \qquad f(t)=\alpha(t) S(t) \qquad P(T>x | T>y) = \frac{P(T>x)}{P(T>y)} = \frac{S(x)}{S(y)}$ 
+$S(t) = \exp(-\int_0^t \alpha(s)ds) \qquad A(t) = \int_0^t \alpha(s)ds \qquad -S'(t) = \alpha(t)S(t) \qquad f(t)=\alpha(t) S(t) \qquad P(T>x | T>y) = \frac{P(T>x)}{P(T>y)} = \frac{S(x)}{S(y)} \\ \lambda(s) = \alpha(s)Y(s)$ 
 
 \medskip
 
@@ -154,7 +154,17 @@ Cox prop. haz. model $\implies \alpha(t | \mathbf{x}) = \alpha_0(t)r(\mathbf{\be
 \textbf{Gehan-Breslow Test}
 $U(t_0) = \frac{Z_1(t_0)}{\sqrt{V_{11}}} \sim N(0,1)$ where 
 $Z_1(t_0) = \int_0^{t_0} Y_2(t)dN_1(t) -\int_0^{t_0} Y_1(t)dN_2(t)$ and 
-$V_{11}(t_0) = \int_0^{t_0} Y_1(t)Y_2(t)dN_{\bullet}(t)$
+$V_{11}(t_0) = \int_0^{t_0} Y_1(t)Y_2(t)dN_{\bullet}(t)$.
+$H_0: \alpha_1 (t) = \alpha_2 (t)$ and $H_1: \alpha_1 (t) \neq \alpha_2 (t)$.
+
+\textbf{Log-rank Test}
+$U(t_0) = \frac{Z_1(t_0)}{\sqrt{V_{11}}} \sim N(0,1)$ where 
+$Z_1(t_0) = \int_0^{t_0} \frac{L(t)}{Y_1(t)}dN_1(t) -\int_0^{t_0} \frac{L(t)}{Y_2(t)}dN_2(t)$ where $L(t) = Y_1(t)Y(2)/Y_{\bullet}(t)$ and 
+$V_{11}(t_0) = \int_0^{t_0} \frac{L(t)^2}{Y_1(t)Y_2(t)} dN_{\bullet}(t)$.
+$H_0: \alpha_1 (t) = \alpha_2 (t)$ and $H_1: \alpha_1 (t) \neq \alpha_2 (t)$. \\
+
+See problem 5. 
+
 
 \medskip
 
@@ -168,7 +178,8 @@ LR test: $\chi^2_{LR} = 2(\log (L(\hat{\beta}) - \log(\beta_0)) \sim \chi^2(1)$
 
 \medskip
 
-\textbf{Hazard Ratio} $\frac{\alpha(t|\mathbf{x}_1)}{\alpha(t|\mathbf{x}_2)}$ e.g. $\frac{\alpha(t|\mathbf{x} =(1,0))}{\alpha(t|\mathbf{x} =(0,1))} = \frac{r(\mathbf{\beta}, (1,0))}{r(\mathbf{\beta}, (0,1))}$
+\textbf{Hazard Ratio} $\frac{\alpha(t|\mathbf{x}_1)}{\alpha(t|\mathbf{x}_2)}$ e.g. $\frac{\alpha(t|\mathbf{x} =(1,0))}{\alpha(t|\mathbf{x} =(0,1))} = \frac{r(\mathbf{\beta}, (1,0))}{r(\mathbf{\beta}, (0,1))}$. 
+Example: Cox's proportional hazard model i.e. $\alpha(t|x) = \alpha_0(t) \exp \{ \sum_j \beta_j x_j\}$. Hazard ratio example $HR_{age} = \frac{\alpha(t| age = 1, sex = z)}{\alpha(t| age = 0, sex = z)} = e^{\hat{\beta}_{age}}$ and $HR_{sex} = \frac{\alpha(t| age = z, sex = 1)}{\alpha(t| age = z, sex = 0)} = e^{\hat{\beta}_{sex}}$ where $z=0,1$.
 
 \newpage
 
@@ -224,6 +235,25 @@ $E[N(t) - \int_0^t \lambda (s)ds |  \mathcal{F}_s] = E[N(t) - \int_0^t \lambda (
 
 \textbf{Problem 4b} For $M(t)$ above, it holds that $M(t)^2 - \int_0^t \lambda (s)ds$ is a mean-zero m.g. Use this with a) to show $\lim_{h\to0^+} \frac{1}{h} E[(M(t+h)-M(t))^2|\mathcal{F}_t] = \lambda(t)$. (i.e. $ d \langle M  \rangle (t) = \lambda(t))$) \\
 \textbf{Solution} $E[(M(t+h)-M(t))^2|\mathcal{F}_t] = E[(M(t+h)^2|\mathcal{F}_t]- 2E[M(t+h)|\mathcal{F}_t]M(t) + M(t)^2 = E[(M(t+h)^2|\mathcal{F}_t] - M(t)$. Now using that $E[(M(t+h)^2 - \int_0^{t+h} \lambda(u)du|\mathcal{F}_t] = M(t)^2 - \int_0^t \lambda (u)du$ it follows that $E[(M(t+h)-M(t))^2|\mathcal{F}_t] = M(t)^2 - \int_0^t \lambda (u)du + \int_0^{t+h} \lambda(u)du - M(t)^2 = \int_t^{t+h} \lambda(u)du$. Desired result follows from standard calculus. 
+
+
+\textbf{Problem 5} Show that $\int_0^{t_0} \frac{L(t)^2}{Y_1(t)Y_2(t)} dN_{\bullet}(t)$ is an unbiased estimator of $\langle V_{11}(t) \rangle (t_0)$ under $H_0: \alpha_1(t) = \alpha_2(t)$. \\ 
+
+\textbf{Solution} Recall $\langle Z_1 \rangle (t_0) = \int_0^{t_0} \underbrace{\frac{L^2(t)}{Y_1(t)Y_2(t)}}_{=H(t)} \underbrace{Y_{\bullet}(t)\alpha(t)dt}_{d\Lambda_{\bullet}(t)}$ where $\Lambda_{\bullet}(t) = Y_{\bullet}(t)\alpha(t) = Y_{1}(t)\alpha(t) + Y_{2}(t)\alpha(t) = \Lambda_{1}(t) + \Lambda_{2}(t)$. Thus $N_{\bullet} = N_{1}(t)+N_{2}(t)$ is compensated by $\Lambda_{\bullet}(t)$. This implies $\int_0^{t_0} H(t) dM_{\bullet} (t) = \int_0^{t_0} H(t) (dN_{\bullet}-d\Lambda_{\bullet}(t))$ is a mean zero m.g. $\implies E[\int_0^{t_0} H(t) dM_{\bullet} (t)] = 0 \implies E[\underbrace{\int_0^{t_0} H(t) dN_{\bullet} (t)}_{V_{11}(t)}] = E[\int_0^{t_0} H(t) d\Lambda_{\bullet} (t)]$.
+
+\textbf{Problem 6} Assume $N_i(t); i=1,...,n$ have intensity processes of the form $\lambda_i(t) = Y_i(t)\alpha_0(t)\exp(\mathbf{\beta}^T\mathbf{x_i})$ where $\mathbf{x_i} = (x_{i1},...,x_{ip})^T$ are fixed covariates. Let $L(\mathbf{\beta})$ be partial likelihood with $r(\mathbf{\beta}^T\mathbf{x_i}) = \exp(\mathbf{\beta}^T\mathbf{x_i})$. \\
+a) Derive vector of score functions $\mathbf{U}(\mathbf{\beta}) = \log L(\mathbf{\beta}) / \partial \mathbf{\beta}$ \\
+b) Derive observed information matrix $\mathbf{I}(\mathbf{\beta}) = -\mathbf{U}(\mathbf{\beta}) / \partial \mathbf{\beta}^T$ 
+\textbf{Solution} (ignoring bold case in solution) $L(\beta) = \prod_{T_j} \frac{r(\beta, x_{ij}(T_j))}{\sum_{\ell \in \mathcal{R}_j} r(\beta, x_{\ell}(T_j))} =  \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}}$. This implies $\frac{\partial}{\partial\beta_k}\log L = \frac{\partial}{\partial\beta_k}\log \Big( \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} \Big) = 
+\frac{\partial}{\partial\beta_k} \sum_{T_j} 
+\Big(  \beta^T x_{ij}- \log (\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}) \Big) =
+\sum_{T_j} 
+\Big( (x_{ij})_k - \sum_{\ell \in \mathcal{R}_j} \frac{(x_{\ell})_k e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} = (U(\beta))_k
+$. The observed Fisher information is thus given by \\
+$
+(I(\beta))_{mk} = \sum_{T_j} \frac{\sum_{\ell \in \mathcal{R}_j} (x_{\ell})_m (x_{\ell})_k e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} -
+\sum_{T_j} \sum_{\ell \in \mathcal{R}_j}  \frac{(x_{\ell})_m  e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} \sum_{\ell \in \mathcal{R}_j} \frac{(x_{\ell})_k  e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}}
+$. (Note $T$ stand for the transpose.)
 
 \section*{Examples}
 
