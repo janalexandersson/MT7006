@@ -1,0 +1,104 @@
+\documentclass{article}		
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{prodint}
+\usepackage[margin=0.2cm,footskip=0.25cm]{geometry}
+\usepackage[swedish,english]{babel}
+\setlength{\parindent}{0pt}
+
+\title{Cheat Sheet}
+\author{Anton Stråhle \& Jan Alexandersson}
+
+\begin{document}
+
+\section*{Nelson-Aalen \& Kaplan-Meier}
+\textbf{Nelson-Aalen} Non-parametric estimator of the cumulative hazard rate. $A(t) = \int_0^t \alpha(u) du$ where $\alpha(t)$ is the hazard rate at time $t$. 
+
+\medskip
+
+\textbf{Formulas} $ \hat{A}(t) = \sum_{T_j \leq t} \Delta \hat{A}(T_j)$ \newline
+$
+\text{No ties } \Delta \hat{A}(T_j) = \frac{1}{Y(T_j)} \quad
+\text{Rounded Ties } \Delta \hat{A}(T_j) = \sum_{k=1}^{d_j -1}\frac{1}{Y(T_j) - k} \quad
+\text{True Ties } \Delta \hat{A}(T_j) = \frac{d_j}{Y(T_j)} $ \newline $
+\hat\sigma^2_{\text{N-A}}(t) = \sum_{T_j \leq t} \Delta \hat\sigma^2(T_j) $\newline 
+$
+\text{No ties } \Delta \hat\sigma^2(T_j) = \frac{1}{Y(T_j)^2} \quad
+\text{Rounded Ties } \Delta \hat\sigma^2(T_j) = \sum_{k=1}^{d_j -1}\frac{1}{(Y(T_j) - k)^2} \quad
+\text{True Ties } \Delta \hat\sigma^2(T_j) = \frac{(Y(T_j)-d_j)d_j}{Y(T_j)^3}$
+
+\medskip
+
+
+\textbf{Derivation of the Nelson-Aalen Estimator}. $M(t)$ is a mean-zero m.g. $H(t) = \frac{J(t)}{Y(t)}$ is predictable where $J(t) = \mathbf{1}(Y(t) > 0)$. We then get $\hat{A}(t) = \int_0^t H(s)dN(s) = \int_0^t\alpha(s)J(s)ds + \int_0^t \frac{J(s)}{Y(s)}dM(s)$. As $M(t)$ is mean-zero m.g. we then get that the Nelson-Aalen estimator is a unbiased estimator of $A^*(t) = \int_0^t \alpha(s)J(s)ds $ since $\mathbb{E}\left[\hat{A}(t) - A^*(t)\right] = 0$. $\hat{A}(t)$ is however a biased estimator of $A(t)$ since $\mathbb{E}[J(s)] = \mathbb{P}(Y(s) > 0)$. This bias is however very small.
+
+\medskip
+
+
+\textbf{Derivation of variance of Nelson-Aalen Estimator}. Recall that $\left[\int HdM\right](t) = \int H(s)^2dN(s)$ where we have $H(s) = \frac{J(s)}{Y(s)} \implies \left[\int HdM\right](t) = \int \left(\frac{J(s)}{Y(s)}\right)^2dN(s) = [\hat{A} - A^*](t) \implies \hat\sigma^2_{\text{N-A}} = \sum_{T_j \leq t} \frac{1}{Y(T_j)}$ 
+
+\medskip
+
+
+\textbf{Delta Method CI Nelson-Aalen} We have that $\hat{A}(t)\overset{\text{approx}}{\sim} N(A(t), \hat\sigma^2(t))$
+\begin{align*}
+	g(\hat{A}(t)) &\approx g(A(t)) + g'(A(t))\underbrace{(\hat{A}(t)-A(t))}_{\mathbb{E}[...] = 0}
+	\implies \mathbb{E}[g(\hat{A}(t))] \approx g(A(t)) \text{ and } \mathbb{E}[(g(\hat{A}(t))- g(A(t))^2] \approx g'(\hat{A}(t))^2\underbrace{\mathbb{E}[(\hat{A}(t) - A(t))^2]}_{\hat\sigma^2}  \\
+	\implies g(\hat{A}(t)) &\overset{\text{approx}}{\sim} N(g(A(t), |g'(\hat{A}(t)|\hat\sigma)
+\end{align*}
+Let $g(x) = \log(x)$ which then gives us $g^{-1}(x) = e^x$ and $g'(x) = \frac{1}{x}$. The interval then becomes as follows. \newline
+$g^{-1}(CI) = \text{exp}\left\{\log(\hat{A}(t)) \pm z_{1-\alpha/2}\frac{\hat\sigma}{\hat{A}(t)}\right\} = \hat{A}(t)\text{exp}\left\{\pm z_{1-\alpha/2}\frac{\hat\sigma}{\hat{A}(t)}\right\}$
+
+\medskip
+
+\textbf{Kaplan-Meier} Non-parametric estimator of the survival function. $S(t) = e^{-A(t)}$ where $A(t)$ is the cumulative hazard rate at time $t$.
+
+\medskip
+
+\textbf{Formulas} $\hat{S}(t) = \prod_{T_j\leq t}\left(1-\frac{1}{Y(T_j)}\right) = \prod_{T_j \leq t} (1- \Delta \hat{A}(T_j))$ \newline
+$\hat\tau^2(t) = \hat{S}(t)^2\sum_{T_j \leq t} \frac{1}{Y(T_j)^2} = \hat{S}(t)^2\hat\sigma^2_{\text{N-A}} \quad \hat\tau^2(t) = \hat{S}(t)^2 \sum_{T_j \leq t}\frac{d_j}{Y(T_j)(Y(T_j)-dj)} \text{ (Greenwood)}$
+
+\medskip
+
+\textbf{Derivation of the Kaplan-Meier Estimator} Recall $\mathbb{P}(T > t) \implies S(t_k|t_{k-1}) = \mathbb{P}(T>t_k|T>t_{k-1}) = \frac{S(t_k)}{S(t_{k-1)}}$. Let $0 = t_0 < t_1 < \hdots < t_n$ and note that $\mathbb{P}(T>t_0) = 1$ which gives us $S(t_n) = \prod_{k=1}^n\frac{S(t_k)}{S(t_{k-1})}$. We formally we define the survival function as $S(t) = \prodi_{u\leq t} (1-dA(u))$ since $\frac{S(t_k)}{S(t_{k-1})} = dA(t_k)$ when $t_k - t_{k-1} <<1$. This gives us the estimator $\hat{S}(t) = \prod_{T_j \leq t} (1-\Delta \hat{A}(T_J))$ as $\Delta \hat{A}(t)$ serves as an estimator for $dA(t)$. 
+
+\medskip
+
+
+\textbf{Kaplan Meier CI} $\hat{S}(t) \pm z_{1-\alpha/2}\hat{\tau}(t)$. Log-transforms (using same method as for Nelson-Aalen above) etc. 
+
+\medskip
+
+\textbf{Derivation of variance of Kaplan-Meier Estimator} 
+Let $S^*(t) = \prodi_{u\leq t} (1-dA^*(t))$ where $A^*(t) = \int_0^t J(u)dA(u)$. If $\mathbb{P}(J(s) = 0) << 1$ then $S^*$ and $S$ are close. We measure this closeness by $\frac{\hat{S}(t)}{S^*(t)} - 1 = -\int_0^t \frac{\hat{S}(u-)}{S^*(u)}d(\hat{A} - A^*)(u)$. We then have that $\mathbb{E}\left[\frac{\hat{S}(t)}{S^*(t)}\right] = 1$. We can then repat the arguments as we do for the variance of the Nelson-Aalen estimator above. $\left[\frac{\hat{S}}{S^*} - 1\right] = \left[\int \frac{-\hat{S}}{S^*}\underbrace{d(\hat{A} - A^*)}_{dM}\right] = \{\text{Theorem}\} = \int \left(\frac{\hat{S}}{S^*}\right)^2d[M]$. Note that $M$ is the same mean-zero m.g. as in the Nelson-Aalen case which gives us $d[M](t)=\frac{J(t)}{Y(t)}dN(t)$. This does in turn give us that $\left[\frac{\hat{S}}{S^*}-1\right] = \int \left(\frac{\hat{S}}{S^*}\right)^2 \frac{J}{Y^2}dN$. Now by assuming $S^* = S$ and $\hat{S}(u) \approx \hat{S}(u-)$ we get that $\text{Var}\left(\frac{\hat{S}(t)}{S(t)} - 1\right) = \hat\sigma^2_{\hat{S}/S- 1}(t) = \int_0^t \frac{J}{Y^2}dN = \hat\sigma^2_{\text{N-A}}(t) \implies \hat\sigma^2_{\hat{S}}(t) \approx \hat{S}^2(t)\int_0^t \frac{J}{Y^2}dN = \hat{S}^2(t)\hat\sigma^2_{\text{N-A}}(t)$
+
+\newpage
+
+\section*{Martingales}
+
+\textbf{Formulas} 
+
+\begin{minipage}{0.5\textwidth}
+	\begin{align*}
+		(H\bullet M)_n &= H_0M_0 + H_1(M_1-M_0) + \hdots + H_n(M_n-M_{n-1}) \\
+		\langle H\bullet M \rangle_n &= \sum_{i=1}^n H_i^2\Delta\langle M\rangle_i \text{ where }\Delta \langle M\rangle_i = [(M_i - M_{i-1})^2|\mathcal{F}_{i-1}]\\
+		\langle H\bullet M\rangle &= H^2\bullet \langle M\rangle \\
+		\langle M \rangle_n &= \sum_{i=1}^n \text{Var}(\Delta M_i| \mathcal{F}_{i-1}) = \sum_{i=1}^n \mathbb{E}[(M_i - M_{i-1})^2|\mathcal{F}_{i-1}] \\
+		\left\langle \int HdM\right\rangle &= \int H^2(s)d\langle M\rangle(s) = \int H^2(s) \lambda(s)ds \\
+	\end{align*}
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+	\begin{align*}
+		[H\bullet M]_n &= \sum_{i=1}^n H_i^2\Delta[M]_i \text{ where }\Delta [M]_i = (M_i - M_{i-1})^2\\
+		[H\bullet M] &= H^2\bullet[M] \\
+		[M]_n &= \sum_{i=1}^n (\Delta M_i)^2 = \sum_{i=1}^n (M_i -M_{i-1})^2 \\
+		\left[ \int HdM\right] &= \int H^2(s)d[ M]s) = \int H^2(s) dN(s)
+	\end{align*}
+\end{minipage}
+
+
+
+\end{document}
