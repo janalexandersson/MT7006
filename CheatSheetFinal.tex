@@ -128,12 +128,18 @@ $\implies E[\Delta M_n | \mathcal{F}_{n-1}] = 0 \implies X_n = E[X_n | \mathcal{
 
 \section*{Frailty}
 
-\textbf{Hazard Ratio} $\frac{\alpha(t|\mathbf{x}_1)}{\alpha(t|\mathbf{x}_2)}$ e.g. $\frac{\alpha(t|\mathbf{x} =(1,0))}{\alpha(t|\mathbf{x} =(0,1))} = \frac{r(\mathbf{\beta}, (1,0))}{r(\mathbf{\beta}, (0,1))}$
+\textbf{Basic Relations}  $A(t|Z) = \int_0^t \alpha(s|Z)ds$ if proportional frailty (i.e. $\alpha(t|Z) = \alpha(t)Z$ we have $A(t|Z) = ZA(t) \implies S(t) = \text{exp}\{-ZA(t)\}$. Consequently the piopulation survival is given by $S(t) = \mathbb{E}[S(t|Z)] = \mathbb{E}\left[\text{exp}\{-A(t|Z)\}\right] = \mathcal{L}_Z(A(t))$ where $\mathcal{L}_Z(c)$ is the Laplace transform (i.e. $\Psi_Z(-c)$).
 
 \medskip
 
-\textbf{Laplace Transform} $\mu(t) = \frac{-S'(t)}{S(t)} = \alpha(t)\frac{\mathcal{L}'(A(t))}{\mathcal{L}(A(t))}$, Frailty model:  $\alpha(t|Z) = \alpha(t)Z \implies S(t)=E[e^{-A(t)Z}] = \mathcal{L}_Z(A(t))$\\
-$S(t) = E[S(t|Z)]$
+\textbf{Population Hazard Rate} $\mu(t) = \frac{-S'(t)}{S(t)} = \alpha(t)\frac{\mathcal{L}'(A(t))}{\mathcal{L}(A(t))}$ assuming proportional frailty ($\alpha(t|Z) = \alpha(t)Z$
+
+\medskip 
+
+\textbf{Modelling Frailty as Power Variance Function} We let $Z \sim \text{PVF}(\varphi, \nu, m)$ for $\nu, m + 1, m\varphi > 0$. This gives us $\mathbb{E}[Z] = \frac{\varphi m}{\nu}$ and $\text{Var}(Z) = \frac{\varphi m}{\nu}\frac{m + 1}{\nu}$. For a PVF it holds that $S(t) = \text{exp}\left\{-\varphi\left(1- \left(\frac{1}{1 + \frac{A(t)}{\nu}}\right)^2\right)\right\}$ and $\mu(t) = \underbrace{\frac{\varphi m}{\nu}}_{\mathbb{E}[Z]}\frac{\alpha(t)}{\left(1+\frac{A(t)}{\nu}\right)^{m+1}}$. 
+
+\textbf{Modelling Frailty as a Gamma distribution}
+We have that $Z\sim \Gamma(\nu, \eta), \nu,\eta > 0$. We then have $\mathbb{E}[Z]$ and $\Phi_Z(c) = \left(\frac{\nu}{\nu-c}\right)^\eta$ (see \textbf{Distriubtions} on page 6). This gives us that $\mathcal{L}_Z(c) = \frac{1}{\left(1 + \frac{c}{\nu}\right)^\eta}$. Common to use $\mathbb{E}[Z] = 1 \implies \nu = \eta$. This then gives us $\mathcal{L}_Z(c) = \frac{1}{\left(1+\frac{c}{\nu}\right)}$. If we let $\delta = \frac{1}{\nu} = \text{Var}(Z)$ which implies $\mathcal{L}_Z(c) = \frac{1}{\left(1+\delta c\right)^{1/\delta}}$. Finally (if we assume a proportional frailty model) we get that the population survival $S(t) = \mathcal{L}_Z(A(t)) = \mathcal{L}_Z(c) = \frac{1}{\left(1+\delta A(t)\right)^{1/\delta}}$ and the population hazard $\mu(t) = \frac{-S'(t)}{S(t)} = \frac{\alpha(t)}{1 + \delta A(t)}$
 
 \newpage
 
@@ -152,7 +158,8 @@ $V_{11}(t_0) = \int_0^{t_0} Y_1(t)Y_2(t)dN_{\bullet}(t)$
 
 \medskip
 
-\textbf{Cox regression} Multiplicative model: $\alpha(t|x_1,...,x_p) = \alpha_0(t)\exp (\beta_1x_1+...+\beta_px_p)$. \\
+\textbf{Cox regression} Note that $r(\boldsymbol\beta, \mathbf{x})= \boldsymbol\beta^T\mathbf{x}$. \\
+Multiplicative model: $\alpha(t|x_1,...,x_p) = \alpha_0(t)\exp (\beta_1x_1+...+\beta_px_p)$. \\
 Additive model:  $\alpha(t|x_1,...,x_p) = \underbrace{\beta_0(t)}_{baseline haz.} + \beta_1 x_1 + ....+ \beta_p x_p$.
 
 \textbf{Cox partial likelihood:}
@@ -160,6 +167,8 @@ $L(\beta) = \prod_{T_j} \frac{r(\beta, x_j)}{\sum_{i \in \mathcal{R}_j} r(\beta,
 LR test: $\chi^2_{LR} = 2(\log (L(\hat{\beta}) - \log(\beta_0)) \sim \chi^2(1)$
 
 \medskip
+
+\textbf{Hazard Ratio} $\frac{\alpha(t|\mathbf{x}_1)}{\alpha(t|\mathbf{x}_2)}$ e.g. $\frac{\alpha(t|\mathbf{x} =(1,0))}{\alpha(t|\mathbf{x} =(0,1))} = \frac{r(\mathbf{\beta}, (1,0))}{r(\mathbf{\beta}, (0,1))}$
 
 \newpage
 
@@ -210,6 +219,8 @@ $E[X_n(X_{n+1}- X_n)| \mathcal{F}_{n}] = X_n E[X_{n+1}- X_n| \mathcal{F}_{n}] = 
 \textbf{Problem 4a} Let $N(t)$ be a Poisson process with intensity function $\lambda(t)$. Show that $M(t) = N(t) - \int_0^t \lambda (s)ds$ is a mean zero m.g. \\
 \textbf{Solution} From def. of the Po-process we know  $E[N(t)-N(s) | \mathcal{F}_s] = \int_s^t \lambda (s)ds$ which follows from indep. increments property. Thus, 
 $E[N(t) - \int_0^t \lambda (s)ds |  \mathcal{F}_s] = E[N(t) - \int_0^t \lambda (s)ds - N(s) + N(s)|  \mathcal{F}_s] = E[N(t) -N(s)] - \int_0^t \lambda (s)ds + N(s) =  \int_s^t \lambda (s)ds - \int_0^t \lambda (s)ds + N(s) =  N(s)- \int_0^s \lambda (s)ds$.
+
+\medskip
 
 \textbf{Problem 4b} For $M(t)$ above, it holds that $M(t)^2 - \int_0^t \lambda (s)ds$ is a mean-zero m.g. Use this with a) to show $\lim_{h\to0^+} \frac{1}{h} E[(M(t+h)-M(t))^2|\mathcal{F}_t] = \lambda(t)$. (i.e. $ d \langle M  \rangle (t) = \lambda(t))$) \\
 \textbf{Solution} $E[(M(t+h)-M(t))^2|\mathcal{F}_t] = E[(M(t+h)^2|\mathcal{F}_t]- 2E[M(t+h)|\mathcal{F}_t]M(t) + M(t)^2 = E[(M(t+h)^2|\mathcal{F}_t] - M(t)$. Now using that $E[(M(t+h)^2 - \int_0^{t+h} \lambda(u)du|\mathcal{F}_t] = M(t)^2 - \int_0^t \lambda (u)du$ it follows that $E[(M(t+h)-M(t))^2|\mathcal{F}_t] = M(t)^2 - \int_0^t \lambda (u)du + \int_0^{t+h} \lambda(u)du - M(t)^2 = \int_t^{t+h} \lambda(u)du$. Desired result follows from standard calculus. 
