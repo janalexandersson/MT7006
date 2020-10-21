@@ -236,11 +236,12 @@ $E[N(t) - \int_0^t \lambda (s)ds |  \mathcal{F}_s] = E[N(t) - \int_0^t \lambda (
 \textbf{Problem 6} Assume $N_i(t); i=1,...,n$ have intensity processes of the form $\lambda_i(t) = Y_i(t)\alpha_0(t)\exp(\mathbf{\beta}^T\mathbf{x_i})$ where $\mathbf{x_i} = (x_{i1},...,x_{ip})^T$ are fixed covariates. Let $L(\mathbf{\beta})$ be partial likelihood with $r(\mathbf{\beta}^T\mathbf{x_i}) = \exp(\mathbf{\beta}^T\mathbf{x_i})$. \\
 a) Derive vector of score functions $\mathbf{U}(\mathbf{\beta}) = \log L(\mathbf{\beta}) / \partial \mathbf{\beta}$ \\
 b) Derive observed information matrix $\mathbf{I}(\mathbf{\beta}) = -\mathbf{U}(\mathbf{\beta}) / \partial \mathbf{\beta}^T$ \\
-\textbf{Solution} (ignoring bold case in solution) $L(\beta) = \prod_{T_j} \frac{r(\beta, x_{ij}(T_j))}{\sum_{\ell \in \mathcal{R}_j} r(\beta, x_{\ell}(T_j))} =  \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}}$. This implies $\frac{\partial}{\partial\beta_k}\log L = \frac{\partial}{\partial\beta_k}\log \Big( \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} \Big) = 
+\textbf{Solution} (ignoring bold case in solution) $L(\beta) = \prod_{T_j} \frac{r(\beta, x_{ij}(T_j))}{\sum_{\ell \in \mathcal{R}_j} r(\beta, x_{\ell}(T_j))} =  \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}}$. \\ 
+This implies $\frac{\partial}{\partial\beta_k}\log L = \frac{\partial}{\partial\beta_k}\log \Big( \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} \Big) = 
 \frac{\partial}{\partial\beta_k} \sum_{T_j} 
 \Big(  \beta^T x_{ij}- \log (\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}) \Big) =
 \sum_{T_j} 
-\Big( (x_{ij})_k - \sum_{\ell \in \mathcal{R}_j} \frac{(x_{\ell})_k e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} = (U(\beta))_k
+\Big( (x_{ij})_k - \sum_{\ell \in \mathcal{R}_j} \frac{(x_{\ell})_k e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} \Big)= (U(\beta))_k
 $. The observed Fisher information is thus given by \\
 $
 (I(\beta))_{mk} = \sum_{T_j} \frac{\sum_{\ell \in \mathcal{R}_j} (x_{\ell})_m (x_{\ell})_k e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} -
