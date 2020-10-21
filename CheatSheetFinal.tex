@@ -80,7 +80,7 @@ $\hat\tau^2(t) = \hat{S}(t)^2\sum_{T_j \leq t} \frac{1}{Y(T_j)^2} = \hat{S}(t)^2
 \medskip
 
 \textbf{Derivation of variance of Kaplan-Meier Estimator} 
-Let $S^*(t) = \prodi_{u\leq t} (1-dA^*(t))$ where $A^*(t) = \int_0^t J(u)dA(u)$. If $\mathbb{P}(J(s) = 0) << 1$ then $S^*$ and $S$ are close. We measure this closeness by $\frac{\hat{S}(t)}{S^*(t)} - 1 = -\int_0^t \frac{\hat{S}(u-)}{S^*(u)}d(\hat{A} - A^*)(u)$. We then have that $\mathbb{E}\left[\frac{\hat{S}(t)}{S^*(t)}\right] = 1$. We can then repat the arguments as we do for the variance of the Nelson-Aalen estimator above. $\left[\frac{\hat{S}}{S^*} - 1\right] = \left[\int \frac{-\hat{S}}{S^*}\underbrace{d(\hat{A} - A^*)}_{dM}\right] = \{\text{Theorem}\} = \int \left(\frac{\hat{S}}{S^*}\right)^2d[M]$. Note that $M$ is the same mean-zero m.g. as in the Nelson-Aalen case which gives us $d[M](t)=\frac{J(t)}{Y(t)}dN(t)$. This does in turn give us that $\left[\frac{\hat{S}}{S^*}-1\right] = \int \left(\frac{\hat{S}}{S^*}\right)^2 \frac{J}{Y^2}dN$. Now by assuming $S^* = S$ and $\hat{S}(u) \approx \hat{S}(u-)$ we get that $\text{Var}\left(\frac{\hat{S}(t)}{S(t)} - 1\right) = \hat\sigma^2_{\hat{S}/S- 1}(t) = \int_0^t \frac{J}{Y^2}dN = \hat\sigma^2_{\text{N-A}}(t) \implies \hat\sigma^2_{\hat{S}}(t) \approx \hat{S}^2(t)\int_0^t \frac{J}{Y^2}dN = \hat{S}^2(t)\hat\sigma^2_{\text{N-A}}(t)$
+Let $S^*(t) = \prodi_{u\leq t} (1-dA^*(t))$ where $A^*(t) = \int_0^t J(u)dA(u)$. If $\mathbb{P}(J(s) = 0) << 1$ then $S^*$ and $S$ are close. We measure this closeness by $\frac{\hat{S}(t)}{S^*(t)} - 1 = -\int_0^t \frac{\hat{S}(u-)}{S^*(u)}d(\hat{A} - A^*)(u)$. We then have that $\mathbb{E}\left[\frac{\hat{S}(t)}{S^*(t)}\right] = 1$. We can then repeat the arguments as we do for the variance of the Nelson-Aalen estimator above. $\left[\frac{\hat{S}}{S^*} - 1\right] = \left[\int \frac{-\hat{S}}{S^*}\underbrace{d(\hat{A} - A^*)}_{dM}\right] = \{\text{Theorem}\} = \int \left(\frac{\hat{S}}{S^*}\right)^2d[M]$. Note that $M$ is the same mean-zero m.g. as in the Nelson-Aalen case which gives us $d[M](t)=\frac{J(t)}{Y(t)}dN(t)$. This does in turn give us that $\left[\frac{\hat{S}}{S^*}-1\right] = \int \left(\frac{\hat{S}}{S^*}\right)^2 \frac{J}{Y^2}dN$. Now by assuming $S^* = S$ and $\hat{S}(u) \approx \hat{S}(u-)$ we get that $\text{Var}\left(\frac{\hat{S}(t)}{S(t)} - 1\right) = \hat\sigma^2_{\hat{S}/S- 1}(t) = \int_0^t \frac{J}{Y^2}dN = \hat\sigma^2_{\text{N-A}}(t) \implies \hat\sigma^2_{\hat{S}}(t) \approx \hat{S}^2(t)\int_0^t \frac{J}{Y^2}dN = \hat{S}^2(t)\hat\sigma^2_{\text{N-A}}(t)$
 
 \newpage
 
@@ -139,7 +139,7 @@ $\implies E[\Delta M_n | \mathcal{F}_{n-1}] = 0 \implies X_n = E[X_n | \mathcal{
 \textbf{Modelling Frailty as Power Variance Function} We let $Z \sim \text{PVF}(\varphi, \nu, m)$ for $\nu, m + 1, m\varphi > 0$. This gives us $\mathbb{E}[Z] = \frac{\varphi m}{\nu}$ and $\text{Var}(Z) = \frac{\varphi m}{\nu}\frac{m + 1}{\nu}$. For a PVF it holds that $S(t) = \text{exp}\left\{-\varphi\left(1- \left(\frac{1}{1 + \frac{A(t)}{\nu}}\right)^2\right)\right\}$ and $\mu(t) = \underbrace{\frac{\varphi m}{\nu}}_{\mathbb{E}[Z]}\frac{\alpha(t)}{\left(1+\frac{A(t)}{\nu}\right)^{m+1}}$. 
 
 \textbf{Modelling Frailty as a Gamma distribution}
-We have that $Z\sim \Gamma(\nu, \eta), \nu,\eta > 0$. We then have $\mathbb{E}[Z]$ and $\Phi_Z(c) = \left(\frac{\nu}{\nu-c}\right)^\eta$ (see \textbf{Distriubtions} on page 6). This gives us that $\mathcal{L}_Z(c) = \frac{1}{\left(1 + \frac{c}{\nu}\right)^\eta}$. Common to use $\mathbb{E}[Z] = 1 \implies \nu = \eta$. This then gives us $\mathcal{L}_Z(c) = \frac{1}{\left(1+\frac{c}{\nu}\right)}$. If we let $\delta = \frac{1}{\nu} = \text{Var}(Z)$ which implies $\mathcal{L}_Z(c) = \frac{1}{\left(1+\delta c\right)^{1/\delta}}$. Finally (if we assume a proportional frailty model) we get that the population survival $S(t) = \mathcal{L}_Z(A(t)) = \mathcal{L}_Z(c) = \frac{1}{\left(1+\delta A(t)\right)^{1/\delta}}$ and the population hazard $\mu(t) = \frac{-S'(t)}{S(t)} = \frac{\alpha(t)}{1 + \delta A(t)}$
+We have that $Z\sim \Gamma(\nu, \eta), \nu,\eta > 0$. We then have $\mathbb{E}[Z]$ and $\Phi_Z(c) = \left(\frac{\nu}{\nu-c}\right)^\eta$ (see \textbf{Distributions} on page 6). This gives us that $\mathcal{L}_Z(c) = \frac{1}{\left(1 + \frac{c}{\nu}\right)^\eta}$. Common to use $\mathbb{E}[Z] = 1 \implies \nu = \eta$. This then gives us $\mathcal{L}_Z(c) = \frac{1}{\left(1+\frac{c}{\nu}\right)}$. If we let $\delta = \frac{1}{\nu} = \text{Var}(Z)$ which implies $\mathcal{L}_Z(c) = \frac{1}{\left(1+\delta c\right)^{1/\delta}}$. Finally (if we assume a proportional frailty model) we get that the population survival $S(t) = \mathcal{L}_Z(A(t)) = \mathcal{L}_Z(c) = \frac{1}{\left(1+\delta A(t)\right)^{1/\delta}}$ and the population hazard $\mu(t) = \frac{-S'(t)}{S(t)} = \frac{\alpha(t)}{1 + \delta A(t)}$
 
 \newpage
 
@@ -183,20 +183,6 @@ Example: Cox's proportional hazard model i.e. $\alpha(t|x) = \alpha_0(t) \exp \{
 
 \newpage
 
-\section*{Misc}
-
-\textbf{Accelerated failure time models:} $\log U_i = \mathbf{\beta}^T\mathbf{x}_i + \varepsilon_i$ where $E[\varepsilon_i]=0$ iid. $\implies S_{U_i}(u)=P(U_i>u)=P(e^{\mathbf{\beta}^T\mathbf{x}_i + \varepsilon_i}>u) = \\ P(\underbrace{\mathbf{\varepsilon_i}}_{w_i} > ue^{-\mathbf{\beta}^T\mathbf{x}_i} = S_{w_i}(ue^{-\mathbf{\beta}^T\mathbf{x}_i})$, (change of time), $\implies S_{U_i}'(u) = S_{w_i}'(ue^{-\mathbf{\beta}^T\mathbf{x}_i})e^{-\mathbf{\beta}^T\mathbf{x}_i} \implies \alpha_{U_i}(u) = \frac{-S_{U_i}'(u)}{S_{U_i}(u)} = \alpha_{w_i}(ue^{-\mathbf{\beta}^T\mathbf{x}_i})ue^{-\mathbf{\beta}^T\mathbf{x}_i}$
-
-\medskip
-
-\textbf{Likelihood} With censored observations we can express the likelihood as follows. $L(\theta; t_1,...,t_n)\prod_{i=1}^n \mathbb{P}(T = t_i)^\delta_i \mathbb{P}(T \geq t_i)^{1-\delta_i}$ where $\delta_i$ is the indicator of $t_i$ being censored. See example below under \textbf{Examples}
-
-\medskip
-
-\textbf{Likelihood in terms of hazard rate} $L(\theta) = \prod_{i\in \mathcal{D}_i}\mathbb{P}(T\in[t_i, t_i +dt;\theta))\prod_{i\notin \mathcal{D}_i}\mathbb{P}(T\geq t_i; \theta) \approx \prod_{i \in \mathcal{D}_i} f(t_i;\theta)dt\prod_{i \notin \mathcal{D}} S(t_i; \theta)$ \newline $\propto \prod_{i\in \mathcal{D}_i}\alpha(t_i;\theta)S(t_i;\theta)\prod_{i\notin \mathcal{D}_i}S(t_i;\theta) = \prod_{i=1}^n \alpha(t_i,\theta)^{\delta_i}S(t_i;\theta)$ where individuals with $\delta_i = 1$ belong to $\mathcal{D}_i$.
-
-\medskip
-
 \section*{Problems, solutions and examples} 
 
 \textbf{Problem 1a} Show $\hat{A}(t) = \int_0^t \frac{I(Y(s)>0)}{Y(s)} dN(s)$ is an unbiased estimator of $A^*(t) = \int_0^t I(Y(s)>0)\alpha(s)ds$. \\
@@ -215,7 +201,7 @@ E[\int_0^t 1\cdot \alpha(s)ds] = A(t)$.
 
 \textbf{Problem 1c} Calculate the optional variation of $\hat{A}(t)−A^*(t)$, i.e. $[\hat{A}(t)−A^*(t)]$ and write this expression as a sum. \\
 \textbf{Solution} $[\hat{A}(t)−A^*(t)] = [\int \frac{1}{Y}dM](t) = \int_0^t \Big(\frac{I(Y(s)>0)}{Y(s)}\Big)^2 dN(s) = \int_0^t\frac{I(Y(s)>0)}{Y(s)^2} dN(s)$. \\ 
-We also have that $Var( \hat{A}(t) - A^*(t)) = E\Big( [\hat{A}(t) - A^*(t)](t) \Big)$ and thus $\hat{A}(t) - A^*(t)](t)$ is an unbiased est. of the variance. \\ Morover, assuming no ties $[\hat{A}(t) - A^*(t)](t) = \int_0^t\frac{I(Y(s)>0)}{Y(s)^2} dN(s) = \sum_{T_j\leq t} \frac{1}{Y(T_j)}$, which is the Nelson-Aalen estimator.
+We also have that $Var( \hat{A}(t) - A^*(t)) = E\Big( [\hat{A}(t) - A^*(t)](t) \Big)$ and thus $\hat{A}(t) - A^*(t)](t)$ is an unbiased est. of the variance. \\ Moreover, assuming no ties $[\hat{A}(t) - A^*(t)](t) = \int_0^t\frac{I(Y(s)>0)}{Y(s)^2} dN(s) = \sum_{T_j\leq t} \frac{1}{Y(T_j)}$, which is the Nelson-Aalen estimator.
 
 \medskip
 
@@ -243,7 +229,7 @@ $E[N(t) - \int_0^t \lambda (s)ds |  \mathcal{F}_s] = E[N(t) - \int_0^t \lambda (
 
 \textbf{Problem 6} Assume $N_i(t); i=1,...,n$ have intensity processes of the form $\lambda_i(t) = Y_i(t)\alpha_0(t)\exp(\mathbf{\beta}^T\mathbf{x_i})$ where $\mathbf{x_i} = (x_{i1},...,x_{ip})^T$ are fixed covariates. Let $L(\mathbf{\beta})$ be partial likelihood with $r(\mathbf{\beta}^T\mathbf{x_i}) = \exp(\mathbf{\beta}^T\mathbf{x_i})$. \\
 a) Derive vector of score functions $\mathbf{U}(\mathbf{\beta}) = \log L(\mathbf{\beta}) / \partial \mathbf{\beta}$ \\
-b) Derive observed information matrix $\mathbf{I}(\mathbf{\beta}) = -\mathbf{U}(\mathbf{\beta}) / \partial \mathbf{\beta}^T$ 
+b) Derive observed information matrix $\mathbf{I}(\mathbf{\beta}) = -\mathbf{U}(\mathbf{\beta}) / \partial \mathbf{\beta}^T$ \\
 \textbf{Solution} (ignoring bold case in solution) $L(\beta) = \prod_{T_j} \frac{r(\beta, x_{ij}(T_j))}{\sum_{\ell \in \mathcal{R}_j} r(\beta, x_{\ell}(T_j))} =  \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}}$. This implies $\frac{\partial}{\partial\beta_k}\log L = \frac{\partial}{\partial\beta_k}\log \Big( \prod_{T_j} \frac{e^{\beta^T x_{ij}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} \Big) = 
 \frac{\partial}{\partial\beta_k} \sum_{T_j} 
 \Big(  \beta^T x_{ij}- \log (\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}) \Big) =
@@ -255,9 +241,11 @@ $
 \sum_{T_j} \sum_{\ell \in \mathcal{R}_j}  \frac{(x_{\ell})_m  e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}} \sum_{\ell \in \mathcal{R}_j} \frac{(x_{\ell})_k  e^{\beta^T x_{\ell}}}{\sum_{\ell \in \mathcal{R}_j} e^{\beta^T x_{\ell}}}
 $. (Note $T$ stand for the transpose.)
 
+\newpage
+
 \section*{Examples}
 
-\textbf{Example of Nelso-Aalen Calculations (different types of ties, $A_1$ uses true ties whilst $A_2$ uses rounded ties)} 
+\textbf{Example of Nelson-Aalen Calculations (different types of ties, $A_1$ uses true ties whilst $A_2$ uses rounded ties)} 
 
 \includegraphics[width=10cm]{surv_table.png}
 
@@ -276,5 +264,19 @@ Let $\alpha(t|Z) = \alpha(t)Z$ where $\mathcal{L}_Z(s) = \mathbb{E}[\text{exp}\{
 \textbf{Example of LR-test using Cox partial likelihood}
 We have $\alpha(t; x) = \alpha_0(t)e^{\beta x}$ and 
 $\{(T_i, \delta_i, x_i)\}_{i=1...5} = \{(1, 1, 1),(3, 1, 0),(4, 0, 1),(7, 0, 0),(10, 1, 1) \}$ then $L(\beta) = \frac{e^{\beta}}{e^{\beta}+1+e^{\beta}+1+e^{\beta}} \cdot \frac{1}{1+e^{\beta}+1+e^{\beta}} \cdot \frac{e^{\beta}}{e^{\beta}}$. We then perform the likelihood ratio test as described under \textbf{Testing} using $\hat\beta$ (which we obtain using regular likelihood theory) and $\beta_0$. 
+
+\section*{Misc}
+
+\textbf{Accelerated failure time models:} $\log U_i = \mathbf{\beta}^T\mathbf{x}_i + \varepsilon_i$ where $E[\varepsilon_i]=0$ iid. $\implies S_{U_i}(u)=P(U_i>u)=P(e^{\mathbf{\beta}^T\mathbf{x}_i + \varepsilon_i}>u) = \\ P(\underbrace{\mathbf{\varepsilon_i}}_{w_i} > ue^{-\mathbf{\beta}^T\mathbf{x}_i} = S_{w_i}(ue^{-\mathbf{\beta}^T\mathbf{x}_i})$, (change of time), $\implies S_{U_i}'(u) = S_{w_i}'(ue^{-\mathbf{\beta}^T\mathbf{x}_i})e^{-\mathbf{\beta}^T\mathbf{x}_i} \implies \alpha_{U_i}(u) = \frac{-S_{U_i}'(u)}{S_{U_i}(u)} = \alpha_{w_i}(ue^{-\mathbf{\beta}^T\mathbf{x}_i})ue^{-\mathbf{\beta}^T\mathbf{x}_i}$
+
+\medskip
+
+\textbf{Likelihood} With censored observations we can express the likelihood as follows. $L(\theta; t_1,...,t_n)\prod_{i=1}^n \mathbb{P}(T = t_i)^\delta_i \mathbb{P}(T \geq t_i)^{1-\delta_i}$ where $\delta_i$ is the indicator of $t_i$ being censored. See example below under \textbf{Examples}
+
+\medskip
+
+\textbf{Likelihood in terms of hazard rate} $L(\theta) = \prod_{i\in \mathcal{D}_i}\mathbb{P}(T\in[t_i, t_i +dt;\theta))\prod_{i\notin \mathcal{D}_i}\mathbb{P}(T\geq t_i; \theta) \approx \prod_{i \in \mathcal{D}_i} f(t_i;\theta)dt\prod_{i \notin \mathcal{D}} S(t_i; \theta)$ \newline $\propto \prod_{i\in \mathcal{D}_i}\alpha(t_i;\theta)S(t_i;\theta)\prod_{i\notin \mathcal{D}_i}S(t_i;\theta) = \prod_{i=1}^n \alpha(t_i,\theta)^{\delta_i}S(t_i;\theta)$ where individuals with $\delta_i = 1$ belong to $\mathcal{D}_i$.
+
+\medskip
 
 \end{document}
