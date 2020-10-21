@@ -11,13 +11,6 @@ suppressPackageStartupMessages(library(knitr))
 suppressPackageStartupMessages(library(fitdistrplus))
 ```
 
-• Argue for the performance of the estimators relative to the true theoretical
-model used, is any of the two preferable?
-
-• What is the effect of censoring?
-
-• What is the effect of n?
-
 In this computer assignment we aim to estimate the cumulative hazard rate using both the Nelson-Aalen and the Kaplan-Meier estimator. However, the Kaplan-Meier estimator estimate the survival funcktion and not the cumulatize hazard rate, but this can be obtained by taking the negative logarithm of the Kaplan-Meier estimator. We choose to present both estimators as cumulative hazard rates to allow for easier comparisons.
 
 We begin by generating $n$ Weibull distributed random numbers from Weibull distribution given by the density function
@@ -58,7 +51,7 @@ Since the expected value of the $C_i$'s are large compared to the $T_i$'s we can
 #Appendix
 
 
-```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+```{r message = FALSE, echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
 set.seed(1337)
 
 n=1000
@@ -229,22 +222,22 @@ plotThings(10, 1)
 ```
 
 
-```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+```{r message = FALSE, echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
 plotThings(100, 2)
 ```
 
 
-```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+```{r message = FALSE, echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
 plotThings(200, 3)
 ```
 
 
-```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+```{r message = FALSE, echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
 plotThings(500, 4)
 ```
 
 
-```{r echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
+```{r message = FALSE, echo = FALSE, warning = FALSE, fig.width = 10, fig.height = 6}
 plotThings(1000, 5)
 ```
 

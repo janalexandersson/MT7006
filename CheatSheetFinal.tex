@@ -79,6 +79,7 @@ Let $S^*(t) = \prodi_{u\leq t} (1-dA^*(t))$ where $A^*(t) = \int_0^t J(u)dA(u)$.
 
 \section*{Martingales}
 
+Definition of Martingales: $M$ is a Martingale if $E[M_t | \mathcal{F}_{s}] = M_s, \quad t\geq s$ and $E[|M_t|] < \infty$. \\
 \textbf{Formulas} 
 
 \begin{minipage}{0.5\textwidth}
@@ -88,29 +89,94 @@ Let $S^*(t) = \prodi_{u\leq t} (1-dA^*(t))$ where $A^*(t) = \int_0^t J(u)dA(u)$.
 		\langle H\bullet M\rangle &= H^2\bullet \langle M\rangle \\
 		\langle M \rangle_n &= \sum_{i=1}^n \text{Var}(\Delta M_i| \mathcal{F}_{i-1}) = \sum_{i=1}^n \mathbb{E}[(M_i - M_{i-1})^2|\mathcal{F}_{i-1}] \\
 		\left\langle \int HdM\right\rangle &= \int H^2(s)d\langle M\rangle(s) = \int H^2(s) \lambda(s)ds \\
+		\\
+		&Cov(M_s, M_t-M_s) = 0 \\
+		&M^2 - \langle M \rangle \text{ and } M^2 - [M] \text{ are zero mean m.g.s. }\\
+		&Var (M(t)) = E\Big( M(t) \Big)^2 = E \langle M \rangle (t) = E[M](t)
 	\end{align*}
 \end{minipage}
 \begin{minipage}{0.5\textwidth}
 	\begin{align*}
+		\Delta M_t &= M_t - M_{t-1} \text{ called m.g. difference}\\
 		[H\bullet M]_n &= \sum_{i=1}^n H_i^2\Delta[M]_i \text{ where }\Delta [M]_i = (M_i - M_{i-1})^2\\
 		[H\bullet M] &= H^2\bullet[M] \\
 		[M]_n &= \sum_{i=1}^n (\Delta M_i)^2 = \sum_{i=1}^n (M_i -M_{i-1})^2 \\
-		\left[ \int HdM\right] &= \int H^2(s)d[ M]s) = \int H^2(s) dN(s)
+		\left[ \int HdM\right] &= \int H^2(s)d[ M]s) = \int H^2(s) dN(s) \\
+		\\
+		&E[M_t-M_s | \mathcal{F}_s] = E[M_t|\mathcal{F}_s] - M_s = 0 \\
+		&E[\Delta M_t | \mathcal{F}_{t-1}] = 0
 	\end{align*}
 \end{minipage}
 
+\medskip
+
+\textbf{Doob decomposition:}
+Let $X$ with $X_0$ be a general discrete time proc. and let $M$ be def. by $M_0 = X_0=0$ and \\  $\underbrace{M_n-M_{n-1}}_{\Delta M_n} = X_n-E[X_n|\mathcal{F}_{n-1}]$
+$\implies E[\Delta M_n | \mathcal{F}_{n-1}] = 0 \implies X_n = E[X_n | \mathcal{F}_{n-1}] + \Delta M_n = \underbrace{E[X_n | \mathcal{F}_{n-1}]}_{pred.} + \underbrace{(X_n-E[X_n| \mathcal{F}_{n-1}])}_{noise}$
 
 \newpage
 
 \section*{Frailty}
 
+\textbf{Hazard ratio:} e.g. $\frac{\alpha(t|\mathbf{x} =(1,0))}{\alpha(t|\mathbf{x} =(0,1))} = \frac{r(\mathbf{\beta}, (1,0))}{r(\mathbf{\beta}, (0,1))}$
+
+\textbf{Laplace:} $\mu(t) = \frac{-S'(t)}{S(t)} = \alpha(t)\frac{\mathcal{L}'(A(t))}{\mathcal{L}(A(t))}$, Frailty model:  $\alpha(t|Z) = \alpha(t)Z \implies S(t)=E[e^{-A(t)Z}] = \mathcal{L}_Z(A(t))$\\
+$S(t) = E[S(t|Z)]$
+
 \newpage
 
 \section*{Testing}
 
+\textbf{Breslow-estimator:} $\hat A_0(t) = \hat A_0(t;\hat{\mathbf{\beta}}) \text{ where } 
+\hat A_0(t;\hat{\mathbf{\beta}}) = \int_0^t\frac{dN_{\bullet}(u)}{\sum_{l=1}^n Y_l(u)r(\mathbf{\beta}, \mathbf{x}_l)}$, \\ 
+Cox prop. haz. model $\implies \alpha(t | \mathbf{x}) = \alpha_0(t)r(\mathbf{\beta}\mathbf{x}) \implies A(t | \mathbf{x}) = A_0(t)r(\mathbf{\beta}\mathbf{x})$
+
+\textbf{Gehan-Breslow:}
+$U(t_0) = \frac{Z_1(t_0)}{\sqrt{V_{11}}} \sim N(0,1)$ where 
+$Z_1(t_0) = \int_0^{t_0} Y_2(t)dN_1(t) -\int_0^{t_0} Y_1(t)dN_2(t)$ and 
+$V_{11}(t_0) = \int_0^{t_0} Y_1(t)Y_2(t)dN_{\bullet}(t)$
+
+\textbf{Cox regression:} Multiplicative model: $\alpha(t|x_1,...,x_p) = \alpha_0(t)\exp (\beta_1x_1+...+\beta_px_p)$. \\
+Additive model:  $\alpha(t|x_1,...,x_p) = \underbrace{\beta_0(t)}_{baseline haz.} + \beta_1 x_1 + ....+ \beta_p x_p$.
+
+\textbf{Cox partial likelihood:}
+$L(\beta) = \prod_{T_j} \frac{r(\beta, x_j)}{\sum_{i \in \mathcal{R}_j} r(\beta, x_j)}$ \\
+Example: $\alpha(t; x) = \alpha_0(t)e^{\beta x}$ and 
+$\{(T_i, \delta_i, x_i)\}_{i=1...5} = \{(1, 1, 1),(3, 1, 0),(4, 0, 1),(7, 0, 0),(10, 1, 1) \}$ then \\ $L(\beta) = \frac{e^{\beta}}{e^{\beta}+1+e^{\beta}+1+e^{\beta}} \cdot \frac{1}{1+e^{\beta}+1+e^{\beta}} \cdot \frac{e^{\beta}}{e^{\beta}} = ...$ \\
+LR test: $\chi^2_{LR} = 2(\log (L(\hat{\beta}) - \log(\beta_0)) \sim \chi^2(1)$
+
 \newpage
 
-\section*{Problems \& Misc}
+\section*{Misc}
 
+\textbf{Accelerated failure time models:} $\log U_i = \mathbf{\beta}^T\mathbf{x}_i + \varepsilon_i$ where $E[\varepsilon_i]=0$ iid. $\implies S_{U_i}(u)=P(U_i>u)=P(e^{\mathbf{\beta}^T\mathbf{x}_i + \varepsilon_i}>u) = \\ P(\underbrace{\mathbf{\varepsilon_i}}_{w_i} > ue^{-\mathbf{\beta}^T\mathbf{x}_i} = S_{w_i}(ue^{-\mathbf{\beta}^T\mathbf{x}_i})$, (change of time), $\implies S_{U_i}'(u) = S_{w_i}'(ue^{-\mathbf{\beta}^T\mathbf{x}_i})e^{-\mathbf{\beta}^T\mathbf{x}_i} \implies \alpha_{U_i}(u) = \frac{-S_{U_i}'(u)}{S_{U_i}(u)} = \alpha_{w_i}(ue^{-\mathbf{\beta}^T\mathbf{x}_i})ue^{-\mathbf{\beta}^T\mathbf{x}_i}$
+
+
+\textbf{Basic stuff} \\
+$S(t) = \exp(-\int_0^t \alpha(s)ds)$ \\
+$A(t) = \int_0^t \alpha(s)ds$ \\
+$-S'(t) = \alpha(t)S(t)$ \\
+$f(t)?\alpha(t) S(t)$ \\
+$P(T>x | T>y) = \frac{P(T>x)}{P(T>y)} = \frac{S(x)}{S(y)}$ \\
+
+\section*{Problems, solutions and examples} 
+\textbf{Problem} Show $\hat{A}(t) = \int_0^t \frac{I(Y(s)>0)}{Y(s)} dN(s)$ is an unbiased estimator of $A^*(t) = \int_0^t I(Y(s)>0)\alpha(s)ds$. \\
+\textbf{Solution} $\hat{A}(t) - A^*(t)= \int_0^t \frac{I(Y(s)>0)}{Y(s)} dN(s) - \int_0^t I(Y(s)>0)\alpha(s)ds = \int_0^t \frac{I(Y(s)>0)}{Y(s)} dN(s) - \int_0^t \frac{I(Y(s)>0)}{Y(s)} Y(s)\alpha(s)ds = \\
+\int_0^t \frac{I(Y(s)>0)}{Y(s)} (dN(s) - Y(s)\alpha(s)ds) =
+\int_0^t \underbrace{\frac{I(Y(s)>0)}{Y(s)}}_{\text{pred.}} \underbrace{dM(s)}_{\text{mean zero m.g}} = 0.
+$ \\
+\textbf{Problem} Show $A^*(t)$ is a biased estimator of $A(t) = \int_0^t\alpha(s)ds$. \\
+\textbf{Solution} $E[A^*(t)] = E[\int_0^t I(Y(s)>0)\alpha(s)ds] \leq 
+E[\int_0^t 1\cdot \alpha(s)ds] = A(t)$. \\
+\textbf{Problem} Calculate the optional variation of $\hat{A}(t)−A^*(t)$, i.e. $[\hat{A}(t)−A^*(t)]$ and write this expression as a sum. \\
+\textbf{Solution} $[\hat{A}(t)−A^*(t)] = [\int \frac{1}{Y}dM](t) = \int_0^t \Big(\frac{I(Y(s)>0)}{Y(s)}\Big)^2 dN(s) = \int_0^t\frac{I(Y(s)>0)}{Y(s)^2} dN(s)$. \\ 
+We also have that $Var( \hat{A}(t) - A^*(t)) = E\Big( [\hat{A}(t) - A^*(t)](t) \Big)$ and thus $\hat{A}(t) - A^*(t)](t)$ is an unbiased est. of the variance. \\ Morover, assuming no ties $[\hat{A}(t) - A^*(t)](t) = \int_0^t\frac{I(Y(s)>0)}{Y(s)^2} dN(s) = \sum_{T_j\leq t} \frac{1}{Y(T_j)}$, which is N-A estimator. \\
+\textbf{Problem} Let $X_n$ be discrete time m.g. Show that $E[X^2_n]$ is non-decreasing in $n$. \\
+\textbf{Solution} First show $M_{n+1} = X_n(X_{n+1}- X_n)$ has zero mean.  
+$E[X_n(X_{n+1}- X_n)| \mathcal{F}_{n}] = X_n E[X_{n+1}- X_n| \mathcal{F}_{n}] = 0$. Now note that $(X_{n+1}- X_{n})^2 = (X_{n+1}- X_{n})(X_{n+1}- X_{n}) = X_{n+1}(X_{n}+ 1- X_{n}) - M_n$. We get that $E[(X_{n+1}- X_{n})^2] = E[ X_{n+1}(X_{n}+ 1- X_{n}) - M_n] = E[ X_{n+1}(X_{n}+ 1- X_{n})] = E[ X_{n+1}^2]- E[X_{n+1} X_{n}] = E[ X_{n+1}^2]- E[E[X_{n+1} X_{n} | \mathcal{F}_n]] =  E[ X_{n+1}^2]- E[ X_{n}^2 ] \geq 0$
+
+\textbf{Table example} 
+
+\includegraphics[width=10cm]{surv_table.png}
 
 \end{document}
